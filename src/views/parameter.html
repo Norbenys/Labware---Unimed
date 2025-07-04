@@ -1,0 +1,392 @@
+
+
+  <style>
+    /* Estilo específico para el modal de agregar parámetro */
+    #addParametroModal .modal-dialog {
+      margin-left: 350px;
+    }
+
+    /* Estilo específico para el modal de ver/editar parámetro */
+    #viewEditParametroModal .modal-dialog {
+      margin-left: 350px;
+    }
+
+    /* Centrar el modal y evitar scroll para ambos */
+    .modal-dialog {
+      max-width: 800px;
+      margin: 1.75rem auto;
+    }
+
+    .modal-body {
+      max-height: none !important;
+      overflow-y: visible !important;
+      padding: 1.5rem 2rem !important;
+    }
+
+    /* Inputs y selects dentro de cualquier modal */
+    .modal-content input.form-control,
+    .modal-content select.form-select {
+      background-color: #fff;
+      color: #495057;
+      border: 1px solid #ced4da;
+      border-radius: 0.375rem;
+      font-size: 14px;
+      padding: 0.6rem 0.75rem;
+    }
+
+    /* Ajuste para selects en ambos modales */
+    #addParametroModal select.form-select,
+    #viewEditParametroModal select.form-select {
+      padding-inline-end: 2rem;
+      background-position: right 1rem center;
+      background-repeat: no-repeat;
+      background-size: 10px;
+    }
+
+    /* Etiquetas de formulario */
+    .modal-body .form-label {
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    /* Aire entre columnas */
+    .modal-body .row.g-3>[class*='col'] {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    /* Botón de guardar alineado */
+    .modal-footer,
+    .text-end.mt-4 {
+      margin-top: 1.5rem;
+      padding-right: 1.2rem;
+    }
+
+    #buscadorParametros {
+      max-width: 250px;
+      position: relative;
+      /* o absolute si es fuera del flujo */
+      top: -6px;
+      /* Mueve hacia abajo */
+      left: 10px;
+      /* Mueve hacia la derecha */
+      /* También puedes usar right o bottom si lo deseas */
+    }
+
+    /* Estilo general del dropdown */
+.dropdown-menu {
+  font-size: 14px;
+  padding: 0.25rem 0;
+  border-radius: 10px !important;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.15);
+  border: none !important;
+  outline: none !important;
+  overflow: hidden !important;
+  background-color: var(--bs-dropdown-bg, #fff); /* se adapta al tema */
+  margin-top: -6px !important; /* Alinea verticalmente con los tres puntos */
+  z-index: 1050; /* Asegura que quede por encima de otros elementos */
+}
+
+/* Ítems dentro del dropdown */
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #333;
+}
+
+/* Hover visual */
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* Íconos de los ítems */
+.dropdown-item i {
+  font-size: 18px;
+}
+
+/* Eliminar pseudo-elementos que causaban el cuadro blanco */
+.dropdown-menu::after,
+.dropdown-menu::before {
+  display: none !important;
+  content: none !important;
+}
+
+  </style>
+
+
+<!-- Contenido principal -->
+<div class="container-fluid py-4">
+  <div class="row mb-4">
+    <div class="col-lg-12">
+      <div class="card">
+        <!-- Header con botón Volver, buscador y botón Agregar -->
+        <div class="card-header pb-0">
+          <div class="row align-items-center justify-content-between">
+            <div class="col-lg-6 d-flex gap-2 align-items-center">
+              <button class="btn btn-dark" onclick="volverAExamenes()" title="Regresar a exámenes">
+                <i class="material-symbols-rounded align-middle">arrow_back</i>
+              </button>
+              <div class="input-group input-group-outline w-100">
+                <input type="text" id="buscadorParametros" class="form-control" placeholder="Buscar parámetro...">
+              </div>
+            </div>
+            <div class="col-lg-6 text-end">
+              <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addParametroModal">
+                <i class="material-symbols-rounded align-middle">add</i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Tabla de parámetros -->
+        <div class="card-body px-3 pb-3">
+          <table id="tablaParametros" class="table table-hover align-items-center mb-0 w-100">
+            <thead>
+              <tr>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nombre</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Código</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Unidad</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Opciones</th>
+              </tr>
+            </thead>
+            <tbody id="paramTableBody">
+              <!-- Filas dinámicas -->
+            </tbody>
+          </table>
+          <div id="paginacionParametros" class="mt-3 text-center"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Ventana para agregar nuevo parámetro -->
+    <div class="modal fade" id="addParametroModal" tabindex="-1" aria-labelledby="addParametroLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header bg-gradient-dark">
+            <h5 class="modal-title text-white" id="addParametroLabel">Nuevo parámetro</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+              aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body px-4">
+            <form id="formAgregarParametro">
+
+              <!-- Fila 1: Nombre y Código -->
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="nombreParametro" class="form-label">Nombre</label>
+                  <input type="text" class="form-control" id="nombreParametro" required pattern="[A-Za-zÁÉÍÓÚáéíóú ]+"
+                    title="Solo letras y espacios">
+                </div>
+                <div class="col-md-6">
+                  <input type="hidden" id="codigoExamenSeleccionado" value="">
+
+                  <label for="codigoParametro" class="form-label">Código</label>
+                  <input type="text" class="form-control" id="codigoParametro" required>
+                </div>
+
+                <!-- Fila 2: Unidad y tipo -->
+                <div class="col-md-6">
+                  <label for="unidadParametro" class="form-label">Unidad de Medida</label>
+                  <input type="text" class="form-control" id="unidadParametro" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="tipoResultado" class="form-label">Tipo de resultado</label>
+                  <select class="form-select" id="tipoResultado" required>
+                    <option value="numerico">Numérico</option>
+                    <option value="automatico">Automático (Pos/Neg)</option>
+                    <option value="texto">Texto</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Referencias -->
+              <div class="row mt-4">
+                <label class="form-label fw-bold">Referencias</label>
+
+                <!-- Valores generales -->
+                <div class="col-md-12 mb-3">
+                  <div class="border rounded px-3 py-2">
+                    <div class="form-check form-switch m-0">
+                      <input class="form-check-input" type="checkbox" id="generalValues"
+                        onclick="toggleGeneralValues()">
+                      <label class="form-check-label ms-2" for="generalValues">Valores generales</label>
+                    </div>
+                  </div>
+
+                  <div id="generalValuesContainer" class="row mt-3" style="display: none;">
+                    <div class="col">
+                      <label for="generalMin" class="form-label">General Min *</label>
+                      <input type="number" step="0.01" class="form-control" id="generalMin">
+                    </div>
+                    <div class="col">
+                      <label for="generalMax" class="form-label">General Max *</label>
+                      <input type="number" step="0.01" class="form-control" id="generalMax">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Otros valores -->
+                <div class="col-md-12 mb-3">
+                  <div class="border rounded px-3 py-2">
+                    <div class="form-check form-switch m-0">
+                      <input class="form-check-input" type="checkbox" id="detailedValues"
+                        onclick="toggleDetailedValues()">
+                      <label class="form-check-label ms-2" for="detailedValues">Otros valores por sexo y edad</label>
+                    </div>
+                  </div>
+
+                  <div id="detailedValuesContainer" class="mt-3" style="display: none;">
+                    <div class="row mb-2">
+                      <div class="col">
+                        <label for="mujeresMin" class="form-label">Mujeres Min</label>
+                        <input type="number" step="0.01" class="form-control" id="mujeresMin">
+                      </div>
+                      <div class="col">
+                        <label for="mujeresMax" class="form-label">Mujeres Max</label>
+                        <input type="number" step="0.01" class="form-control" id="mujeresMax">
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col">
+                        <label for="hombresMin" class="form-label">Hombres Min</label>
+                        <input type="number" step="0.01" class="form-control" id="hombresMin">
+                      </div>
+                      <div class="col">
+                        <label for="hombresMax" class="form-label">Hombres Max</label>
+                        <input type="number" step="0.01" class="form-control" id="hombresMax">
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col">
+                        <label for="ninosMin" class="form-label">Niños Min</label>
+                        <input type="number" step="0.01" class="form-control" id="ninosMin">
+                      </div>
+                      <div class="col">
+                        <label for="ninosMax" class="form-label">Niños Max</label>
+                        <input type="number" step="0.01" class="form-control" id="ninosMax">
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col">
+                        <label for="neonatosMin" class="form-label">Neonatos Min</label>
+                        <input type="number" step="0.01" class="form-control" id="neonatosMin">
+                      </div>
+                      <div class="col">
+                        <label for="neonatosMax" class="form-label">Neonatos Max</label>
+                        <input type="number" step="0.01" class="form-control" id="neonatosMax">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botón guardar -->
+              <div class="text-end mt-4">
+                <button type="submit" class="btn btn-dark">
+                  <i class="material-symbols-rounded align-middle">check</i> Guardar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ventana para ver/editar parámetro -->
+    <div class="modal fade" id="viewEditParametroModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header bg-gradient-dark">
+            <h5 class="modal-title text-white" id="viewEditParametroTitle">Información del parámetro</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body px-4">
+            <form id="editParametroForm">
+              <input type="hidden" id="edit_id_parametro">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="edit_nombreParametro" class="form-label">Nombre</label>
+                  <input type="text" class="form-control" id="edit_nombreParametro">
+                </div>
+                <div class="col-md-6">
+                  <label for="edit_codigoParametro" class="form-label">Código</label>
+                  <input type="text" class="form-control" id="edit_codigoParametro">
+                </div>
+                <div class="col-md-6">
+                  <label for="edit_unidadParametro" class="form-label">Unidad de Medida</label>
+                  <input type="text" class="form-control" id="edit_unidadParametro">
+                </div>
+                <div class="col-md-6">
+                  <label for="edit_tipoResultado" class="form-label">Tipo de resultado</label>
+                  <select class="form-select" id="edit_tipoResultado">
+                    <option value="numerico">Numérico</option>
+                    <option value="automatico">Automático (Pos/Neg)</option>
+                    <option value="texto">Texto</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row mt-4">
+                <label class="form-label fw-bold">Referencias</label>
+                <div class="col-md-6 mb-2">
+                  <label for="edit_generalMin" class="form-label">General Min</label>
+                  <input type="number" step="0.01" class="form-control" id="edit_generalMin">
+                </div>
+                <div class="col-md-6 mb-2">
+                  <label for="edit_generalMax" class="form-label">General Max</label>
+                  <input type="number" step="0.01" class="form-control" id="edit_generalMax">
+                </div>
+                <div class="col-md-6 mb-2">
+                  <label for="edit_mujeresMin" class="form-label">Mujeres Min</label>
+                  <input type="number" step="0.01" class="form-control" id="edit_mujeresMin">
+                </div>
+                <div class="col-md-6 mb-2">
+                  <label for="edit_mujeresMax" class="form-label">Mujeres Max</label>
+                  <input type="number" step="0.01" class="form-control" id="edit_mujeresMax">
+                </div>
+                <div class="col-md-6 mb-2">
+                  <label for="edit_hombresMin" class="form-label">Hombres Min</label>
+                  <input type="number" step="0.01" class="form-control" id="edit_hombresMin">
+                </div>
+                <div class="col-md-6 mb-2">
+                  <label for="edit_hombresMax" class="form-label">Hombres Max</label>
+                  <input type="number" step="0.01" class="form-control" id="edit_hombresMax">
+                </div>
+                <div class="col-md-6 mb-2">
+                  <label for="edit_ninosMin" class="form-label">Niños Min</label>
+                  <input type="number" step="0.01" class="form-control" id="edit_ninosMin">
+                </div>
+                <div class="col-md-6 mb-2">
+                  <label for="edit_ninosMax" class="form-label">Niños Max</label>
+                  <input type="number" step="0.01" class="form-control" id="edit_ninosMax">
+                </div>
+                <div class="col-md-6 mb-2">
+                  <label for="edit_neonatosMin" class="form-label">Neonatos Min</label>
+                  <input type="number" step="0.01" class="form-control" id="edit_neonatosMin">
+                </div>
+                <div class="col-md-6 mb-2">
+                  <label for="edit_neonatosMax" class="form-label">Neonatos Max</label>
+                  <input type="number" step="0.01" class="form-control" id="edit_neonatosMax">
+                </div>
+              </div>
+              <div class="text-end mt-4" id="btnGuardarCambiosParametroContainer" style="display: none;">
+                <button type="submit" class="btn btn-dark">
+                  <i class="material-symbols-rounded align-middle">save</i> Guardar cambios
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  <script src="../js/parameter.js"></script>
+
+ 

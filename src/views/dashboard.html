@@ -1,0 +1,247 @@
+<style>
+  /* Estilos específicos para el dashboard */
+  .stats-card {
+    transition: transform 0.2s ease-in-out;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  }
+  
+  .stats-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+  }
+  
+  .chart-container {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .recent-table {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .status-pendiente { background-color: #fff3cd; color: #856404; }
+  .status-analisis { background-color: #d1ecf1; color: #0c5460; }
+  .status-validada { background-color: #d4edda; color: #155724; }
+  .status-remitida { background-color: #f8d7da; color: #721c24; }
+  .status-entregada { background-color: #e2e3e5; color: #383d41; }
+</style>
+
+<div class="container-fluid py-4">
+  <!-- Header del Dashboard -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card bg-gradient-dark">
+        <div class="card-body p-4">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h2 class="text-white mb-1">Dashboard</h2>
+              <p class="text-white-50 mb-0">Panel de control del laboratorio clínico</p>
+            </div>
+            <div class="col-md-4 text-end">
+              <div class="text-white-50">
+                <i class="material-icons align-middle">schedule</i>
+                <span id="currentTime"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tarjetas de Estadísticas -->
+  <div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card stats-card">
+        <div class="card-body p-3">
+          <div class="row">
+            <div class="col-8">
+              <div class="numbers">
+                <p class="text-sm mb-0 text-capitalize font-weight-bold">Órdenes Hoy</p>
+                <h5 class="font-weight-bolder mb-0" id="ordenesHoy">0</h5>
+              </div>
+            </div>
+            <div class="col-4 text-end">
+              <div class="stats-icon bg-gradient-primary">
+                <i class="material-icons">today</i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card stats-card">
+        <div class="card-body p-3">
+          <div class="row">
+            <div class="col-8">
+              <div class="numbers">
+                <p class="text-sm mb-0 text-capitalize font-weight-bold">En Análisis</p>
+                <h5 class="font-weight-bolder mb-0" id="ordenesAnalisis">0</h5>
+              </div>
+            </div>
+            <div class="col-4 text-end">
+              <div class="stats-icon bg-gradient-info">
+                <i class="material-icons">science</i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card stats-card">
+        <div class="card-body p-3">
+          <div class="row">
+            <div class="col-8">
+              <div class="numbers">
+                <p class="text-sm mb-0 text-capitalize font-weight-bold">Validadas</p>
+                <h5 class="font-weight-bolder mb-0" id="ordenesValidadas">0</h5>
+              </div>
+            </div>
+            <div class="col-4 text-end">
+              <div class="stats-icon bg-gradient-success">
+                <i class="material-icons">verified</i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card stats-card">
+        <div class="card-body p-3">
+          <div class="row">
+            <div class="col-8">
+              <div class="numbers">
+                <p class="text-sm mb-0 text-capitalize font-weight-bold">Entregadas</p>
+                <h5 class="font-weight-bolder mb-0" id="ordenesEntregadas">0</h5>
+              </div>
+            </div>
+            <div class="col-4 text-end">
+              <div class="stats-icon bg-gradient-warning">
+                <i class="material-icons">check_circle</i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficas y Tablas -->
+  <div class="row">
+    <!-- Gráfica de Órdenes por Estado -->
+    <div class="col-lg-6 mb-4">
+      <div class="chart-container">
+        <h6 class="mb-3">Órdenes por Estado</h6>
+        <canvas id="estadosChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+
+    <!-- Gráfica de Órdenes Últimos 7 Días -->
+    <div class="col-lg-6 mb-4">
+      <div class="chart-container">
+        <h6 class="mb-3">Órdenes Últimos 7 Días</h6>
+        <canvas id="tendenciasChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tablas Informativas -->
+  <div class="row">
+    <!-- Órdenes Recientes -->
+    <div class="col-lg-6 mb-4">
+      <div class="recent-table">
+        <div class="card-header pb-0">
+          <h6 class="mb-0">Órdenes Recientes</h6>
+        </div>
+        <div class="card-body px-0 pt-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Orden</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Paciente</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Estado</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Fecha</th>
+                </tr>
+              </thead>
+              <tbody id="ordenesRecientesTable">
+                <!-- Se llena dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exámenes Pendientes -->
+    <div class="col-lg-6 mb-4">
+      <div class="recent-table">
+        <div class="card-header pb-0">
+          <h6 class="mb-0">Exámenes Pendientes</h6>
+        </div>
+        <div class="card-body px-0 pt-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Orden</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Paciente</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Examen</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Fecha</th>
+                </tr>
+              </thead>
+              <tbody id="examenesPendientesTable">
+                <!-- Se llena dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exámenes Más Populares -->
+  <div class="row">
+    <div class="col-12">
+      <div class="chart-container">
+        <h6 class="mb-3">Exámenes Más Solicitados</h6>
+        <canvas id="examenesChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/plugins/chartjs.min.js"></script>
+<script src="../js/dashboard.js"></script>

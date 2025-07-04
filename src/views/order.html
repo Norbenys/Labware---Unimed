@@ -1,0 +1,214 @@
+
+  <style>
+    #buscadorOrdenes {
+      max-width: 250px;
+      /* Puedes cambiar a 250px, 400px, etc. */
+    }
+
+    /* Estilo específico para el modal de ver/editar orden */
+    #verEditarOrdenModal .modal-dialog {
+      margin-left: 350px;
+      /* Desplaza hacia la derecha */
+    }
+
+    /* Centrar el modal y evitar scroll para todos los modales */
+    .modal-dialog {
+      max-width: 800px;
+      margin: 1.75rem auto;
+    }
+
+    /* Ajustes para el cuerpo del modal */
+    .modal-body {
+      max-height: none !important;
+      overflow-y: visible !important;
+      padding: 1.5rem 2rem !important;
+    }
+
+    /* Estilos para inputs y selects dentro del modal */
+    #verEditarOrdenModal input.form-control,
+    #verEditarOrdenModal select.form-select {
+      background-color: #fff;
+      color: #495057;
+      border: 1px solid #ced4da;
+      border-radius: 0.375rem;
+      font-size: 14px;
+      padding: 0.6rem 0.75rem;
+    }
+
+    /* Ajuste visual para los selects */
+    #verEditarOrdenModal select.form-select {
+      padding-inline-end: 2rem;
+      background-position: right 1rem center;
+      background-repeat: no-repeat;
+      background-size: 10px;
+    }
+
+    /* Estilo de las etiquetas del formulario */
+    #verEditarOrdenModal .form-label {
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    /* Espaciado entre columnas del formulario */
+    #verEditarOrdenModal .row.g-3>[class*='col'] {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    /* Alineación del botón de guardar */
+    #verEditarOrdenModal .modal-footer,
+    #verEditarOrdenModal .text-end.mt-4 {
+      margin-top: 1.5rem;
+      padding-right: 1.2rem;
+    }
+
+    #tablaOrdenes th,
+#tablaOrdenes td {
+  font-size: 0.875rem; /* mismo tamaño base que pacientes */
+  vertical-align: middle;
+}
+
+
+/* Estilo general del dropdown */
+.dropdown-menu {
+  font-size: 14px;
+  padding: 0.25rem 0;
+  border-radius: 10px !important;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.15);
+  border: none !important;
+  outline: none !important;
+  overflow: hidden !important;
+  background-color: var(--bs-dropdown-bg, #fff); /* se adapta al tema */
+  margin-top: -6px !important; /* Alinea verticalmente con los tres puntos */
+  z-index: 1050; /* Asegura que quede por encima de otros elementos */
+}
+
+/* Ítems dentro del dropdown */
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #333;
+}
+
+/* Hover visual */
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* Íconos de los ítems */
+.dropdown-item i {
+  font-size: 18px;
+}
+
+/* Eliminar pseudo-elementos que causaban el cuadro blanco */
+.dropdown-menu::after,
+.dropdown-menu::before {
+  display: none !important;
+  content: none !important;
+}
+
+</style>
+
+    <!-- Tabla de órdenes -->
+    <div class="container-fluid py-4">
+      <div class="row mb-4">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-header pb-0">
+              <div class="row">
+                <div class="col-lg-6 col-7 d-flex align-items-center">
+                  <div class="input-group input-group-outline w-100">
+                    <input type="text" id="buscadorOrdenes" class="form-control" placeholder="Buscar...">
+                  </div>
+                </div>
+                <div class="col-lg-6 col-5 my-auto text-end">
+                  <!-- Botón opcional para acciones globales -->
+                  <!-- <button class="btn btn-dark"><i class="material-symbols-rounded align-middle">add</i></button> -->
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body px-3 pb-3">
+              <table id="tablaOrdenes" class="table table-hover align-items-center mb-0 w-100">
+                <thead>
+                  <tr>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Orden</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Paciente
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Fecha
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Hora
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Estado
+                    </th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Opciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="ordenesTableBody">
+                  <!-- Filas dinámicas -->
+                </tbody>
+              </table>
+
+              <!-- Paginación -->
+              <div id="paginacionOrdenes" class="mt-3 text-center"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Ventana para ver/editar Orden -->
+    <div class="modal fade" id="verEditarOrdenModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header bg-gradient-dark">
+            <h5 class="modal-title text-white" id="ordenModalTitle">Información de Orden</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body px-4">
+            <form id="ordenForm">
+              <input type="hidden" id="orden_id">
+              <div class="row g-3">
+                <div class="col-12 col-md-6">
+                  <label for="orden_paciente" class="form-label">Paciente</label>
+                  <input type="text" class="form-control" id="orden_paciente" disabled>
+                </div>
+                <div class="col-12 col-md-6">
+                  <label for="orden_fecha" class="form-label">Fecha</label>
+                  <input type="date" class="form-control" id="orden_fecha" disabled>
+                </div>
+                <div class="col-12 col-md-6">
+                  <label for="orden_hora" class="form-label">Hora</label>
+                  <input type="time" class="form-control" id="orden_hora" disabled>
+                </div>
+                <div class="col-12 col-md-6">
+                  <label for="orden_estado" class="form-label">Estado</label>
+                  <select class="form-select" id="orden_estado" disabled>
+                    <option value="Pendiente de pago">Pendiente de pago</option>
+                    <option value="Pagada">Pagada</option>
+                    <option value="Anulada">Anulada</option>
+                  </select>
+                </div>
+              </div>
+              <div class="text-end mt-4" id="btnGuardarOrdenContainer" style="display: none;">
+                <button type="submit" class="btn btn-dark" id="btnGuardarOrden">
+                  <i class="material-symbols-rounded align-middle">save</i> Guardar cambios
+                </button>
+              </div>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    </div>
+
+
+
+  <script src="../js/order.js"></script>
+  

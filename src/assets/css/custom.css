@@ -1,0 +1,34 @@
+
+.scroll-wrapper {
+  height: calc(100vh - 100px); /* ajusta si tienes header arriba */
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 10px; /* Aquí alejamos la barra del borde derecho */
+  scrollbar-gutter: stable;
+}
+
+/* Ocultar scrollbar por defecto */
+.scroll-wrapper::-webkit-scrollbar {
+  width: 6px;
+  background: transparent;
+}
+
+/* Solo mostrar al hacer hover */
+.scroll-wrapper:hover::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* gris claro */
+  border-radius: 8px;
+  margin-right: 6px;
+}
+
+.scroll-wrapper:hover::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Cancelamos scroll general para que no se duplique */
+html, body {
+  overflow: hidden !important;
+}
+
+#sidenav-main {
+  overflow: hidden !important;
+}
