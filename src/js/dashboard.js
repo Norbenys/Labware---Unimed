@@ -23,68 +23,7 @@ async function initDashboard() {
     document.getElementById('ordenesEntregadas').textContent = stats.stats.ordenesEntregadas;
     document.getElementById('ordenesEntregadasPorcentaje').textContent = '+20%';
 
-    // 2. Obtener órdenes recientes
-    const ordenesResponse = await fetch('/api/dashboard/ordenes-recientes');
-    if (!ordenesResponse.ok) {
-      throw new Error('Error al obtener órdenes recientes');
-    }
-    const ordenesData = await ordenesResponse.json();
-
-    if (!ordenesData.success) {
-      throw new Error(ordenesData.message || 'Error en las órdenes recientes');
-    }
-
-    // Llenar tabla de órdenes recientes
-    document.getElementById('ordenesRecientesCantidad').textContent = ordenesData.ordenes.length;
-    const tbody = document.getElementById('tablaOrdenesRecientes');
-    tbody.innerHTML = '';
-    
-    ordenesData.ordenes.slice(0, 5).forEach(orden => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${orden.id_orden}</td>
-        <td>${orden.paciente}</td>
-        <td class="text-center">
-          <span class="badge bg-gradient-${getBadgeColor(orden.estado)}">${orden.estado}</span>
-        </td>
-        <td class="text-center">${formatDate(orden.fecha)}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-
-    // 3. Obtener exámenes pendientes
-    const examenesResponse = await fetch('/api/dashboard/examenes-pendientes');
-    if (!examenesResponse.ok) {
-      throw new Error('Error al obtener exámenes pendientes');
-    }
-    const examenesData = await examenesResponse.json();
-
-    if (!examenesData.success) {
-      throw new Error(examenesData.message || 'Error en los exámenes pendientes');
-    }
-
-    // Llenar timeline con exámenes pendientes
-    const timelineDiv = document.getElementById('timelineActividad');
-    timelineDiv.innerHTML = '';
-    
-    examenesData.examenes.slice(0, 4).forEach((examen, index) => {
-      const timelineItem = `
-        <div class="timeline-block mb-3">
-          <span class="timeline-step">
-            <i class="material-symbols-rounded text-info text-gradient">science</i>
-          </span>
-          <div class="timeline-content">
-            <h6 class="text-dark text-sm font-weight-bold mb-0">${examen.examen} - ${examen.paciente}</h6>
-            <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">${formatDate(examen.fecha)}</p>
-          </div>
-        </div>
-      `;
-      timelineDiv.innerHTML += timelineItem;
-    });
-
-    document.getElementById('actividadPorcentaje').textContent = '85%';
-
-    // 4. Crear gráficas con Chart.js
+    // 2. Crear gráficas con Chart.js
     if (window.Chart) {
       // Gráfica de órdenes por estado
       const ordenesPorEstado = stats.stats.ordenesPorEstado;
@@ -95,6 +34,7 @@ async function initDashboard() {
           datasets: [{
             data: ordenesPorEstado.map(item => item.cantidad),
             backgroundColor: ['#fbcf33', '#17c1e8', '#4CAF50', '#FFA726', '#e91e63'],
+            borderWidth: 0
           }]
         },
         options: { 
@@ -102,7 +42,18 @@ async function initDashboard() {
           cutout: '70%',
           plugins: {
             legend: {
-              position: 'bottom'
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.parsed;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = ((value / total) * 100).toFixed(1);
+                  return `${label}: ${value} (${percentage}%)`;
+                }
+              }
             }
           }
         }
@@ -138,7 +89,7 @@ async function initDashboard() {
       new Chart(document.getElementById('chart-pacientes'), {
         type: 'bar',
         data: {
-          labels: examenesPopulares.map(item => item.examen),
+          labels: examenesPopulares.map(item => item.codigo),
           datasets: [{
             label: 'Solicitudes',
             data: examenesPopulares.map(item => item.cantidad),
@@ -150,6 +101,17 @@ async function initDashboard() {
           plugins: {
             legend: {
               display: false
+            },
+            tooltip: {
+              callbacks: {
+                title: function(context) {
+                  const idx = context[0].dataIndex;
+                  return examenesPopulares[idx].examen;
+                },
+                label: function(context) {
+                  return `Solicitudes: ${context.parsed.y}`;
+                }
+              }
             }
           }
         }
@@ -160,7 +122,6 @@ async function initDashboard() {
 
   } catch (error) {
     console.error('❌ Error al cargar dashboard:', error);
-    
     // Mostrar mensaje de error en el dashboard
     const errorMessage = `
       <div class="alert alert-danger" role="alert">
@@ -168,7 +129,6 @@ async function initDashboard() {
         <br><small>Verifica que el servidor esté funcionando y los endpoints estén disponibles.</small>
       </div>
     `;
-    
     // Insertar mensaje de error en el dashboard
     const dashboardContent = document.querySelector('.container-fluid');
     if (dashboardContent) {

@@ -1,8 +1,8 @@
 (function() {
 // ================== Variables globales ================== 
 let remitidosGlobal = [];
-let paginaActual = 1;
-const registrosPorPagina = 6;
+let paginaActualRemitidos = 1;
+const registrosPorPaginaRemitidos = 6;
 
 // ================== Cargar datos al iniciar ==================
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const buscador = document.getElementById('buscadorRemitidos');
   if (buscador) {
     buscador.addEventListener('input', () => {
-      paginaActual = 1;
+      paginaActualRemitidos = 1;
       aplicarFiltroYPaginacion();
     });
   }
@@ -61,6 +61,7 @@ async function cargarRemitidos() {
     if (!data.success) throw new Error('Error al obtener las órdenes remitidas.');
 
     remitidosGlobal = data.remitidos;
+    console.log('Remitidos cargados:', remitidosGlobal);
     renderizarTabla(remitidosGlobal);
     aplicarFiltroYPaginacion();
   } catch (err) {
@@ -118,80 +119,93 @@ function renderizarTabla(lista) {
 
 
 // ================== Filtro y paginación ==================
-function aplicarFiltroYPaginacion() {
-  const filtro = document.getElementById('buscadorRemitidos').value.trim().toLowerCase();
-  const filas = Array.from(document.querySelectorAll('#remitidosTableBody tr'));
+function normalizar(str) {
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, ''); // Quita tildes
+}
 
-  const filasFiltradas = filas.filter(fila => {
-    const orden = fila.children[0]?.textContent.toLowerCase() || '';
-    const paciente = fila.children[1]?.textContent.toLowerCase() || '';
-    const examen = fila.children[4]?.textContent.toLowerCase() || '';
-    return orden.includes(filtro) || paciente.includes(filtro) || examen.includes(filtro);
+function aplicarFiltroYPaginacion() {
+  const filtro = normalizar(document.getElementById('buscadorRemitidos').value.trim());
+
+  // Filtrar datos
+  const filtrados = remitidosGlobal.filter(item => {
+    const cedula = normalizar(item.cedula?.toString() || '');
+    const nombres = normalizar(item.nombres || '');
+    const apellidos = normalizar(item.apellidos || '');
+    const paciente = `${nombres} ${apellidos}`;
+    const examen = normalizar(item.examen || '');
+    const idOrden = normalizar(item.id_orden?.toString() || '');
+    const fecha = normalizar(item.fecha?.split('T')[0] || '');
+    const texto = `${cedula} ${nombres} ${apellidos} ${paciente} ${examen} ${idOrden} ${fecha}`;
+    return texto.includes(filtro);
   });
 
-  const totalPaginas = Math.ceil(filasFiltradas.length / registrosPorPagina);
-  if (paginaActual > totalPaginas) paginaActual = 1;
+  // Paginación
+  const totalPaginas = Math.ceil(filtrados.length / registrosPorPaginaRemitidos);
+  if (paginaActualRemitidos > totalPaginas) paginaActualRemitidos = 1;
 
-  filas.forEach(fila => fila.style.display = 'none');
+  const inicio = (paginaActualRemitidos - 1) * registrosPorPaginaRemitidos;
+  const fin = inicio + registrosPorPaginaRemitidos;
+  const paginaActualData = filtrados.slice(inicio, fin);
 
-  const inicio = (paginaActual - 1) * registrosPorPagina;
-  const fin = inicio + registrosPorPagina;
-  filasFiltradas.slice(inicio, fin).forEach(fila => fila.style.display = '');
+  // Renderizar
+  renderizarTabla(paginaActualData);
 
+  // Crear paginación solo si hay más de una página
   const paginacion = document.getElementById('paginacionRemitidos');
   if (!paginacion) return;
-
-  if (totalPaginas <= 1) {
-    paginacion.innerHTML = '';
-    paginacion.style.display = 'none';
-    return;
-  } else {
-    paginacion.style.display = 'flex'; // o 'block' según tu diseño
-  }
-
   paginacion.innerHTML = '';
 
-  const maxVisible = 3;
-  let start = Math.max(1, paginaActual - Math.floor(maxVisible / 2));
-  let end = start + maxVisible - 1;
-  if (end > totalPaginas) {
-    end = totalPaginas;
-    start = Math.max(1, end - maxVisible + 1);
-  }
+  if (totalPaginas > 1) {
+    const maxVisible = 3;
+    let start = Math.max(1, paginaActualRemitidos - Math.floor(maxVisible / 2));
+    let end = start + maxVisible - 1;
+    if (end > totalPaginas) {
+      end = totalPaginas;
+      start = Math.max(1, end - maxVisible + 1);
+    }
 
-  if (paginaActual > 1) {
-    const btnPrev = document.createElement('button');
-    btnPrev.textContent = '«';
-    btnPrev.className = 'btn btn-outline-dark btn-sm mx-1';
-    btnPrev.onclick = () => {
-      paginaActual--;
-      aplicarFiltroYPaginacion();
-    };
-    paginacion.appendChild(btnPrev);
-  }
+    if (paginaActualRemitidos > 1) {
+      const btnPrev = document.createElement('button');
+      btnPrev.textContent = '«';
+      btnPrev.className = 'btn btn-outline-dark btn-sm mx-1';
+      btnPrev.onclick = () => {
+        paginaActualRemitidos--;
+        aplicarFiltroYPaginacion();
+      };
+      paginacion.appendChild(btnPrev);
+    }
 
-  for (let i = start; i <= end; i++) {
-    const btn = document.createElement('button');
-    btn.className = `btn btn-sm mx-1 ${i === paginaActual ? 'btn-dark' : 'btn-outline-dark'}`;
-    btn.textContent = i;
-    btn.onclick = () => {
-      paginaActual = i;
-      aplicarFiltroYPaginacion();
-    };
-    paginacion.appendChild(btn);
-  }
+    for (let i = start; i <= end; i++) {
+      const btn = document.createElement('button');
+      btn.className = `btn btn-sm mx-1 ${i === paginaActualRemitidos ? 'btn-dark' : 'btn-outline-dark'}`;
+      btn.textContent = i;
+      btn.onclick = () => {
+        paginaActualRemitidos = i;
+        aplicarFiltroYPaginacion();
+      };
+      paginacion.appendChild(btn);
+    }
 
-  if (paginaActual < totalPaginas) {
-    const btnNext = document.createElement('button');
-    btnNext.textContent = '»';
-    btnNext.className = 'btn btn-outline-dark btn-sm mx-1';
-    btnNext.onclick = () => {
-      paginaActual++;
-      aplicarFiltroYPaginacion();
-    };
-    paginacion.appendChild(btnNext);
+    if (paginaActualRemitidos < totalPaginas) {
+      const btnNext = document.createElement('button');
+      btnNext.textContent = '»';
+      btnNext.className = 'btn btn-outline-dark btn-sm mx-1';
+      btnNext.onclick = () => {
+        paginaActualRemitidos++;
+        aplicarFiltroYPaginacion();
+      };
+      paginacion.appendChild(btnNext);
+    }
   }
 }
+
+document.getElementById('buscadorRemitidos').addEventListener('input', () => {
+  paginaActualRemitidos = 1;
+  aplicarFiltroYPaginacion();
+});
 
 
 // ================== Obtener detalle de orden ==================
@@ -730,7 +744,7 @@ function initRemission() {
   if (tbody) tbody.innerHTML = '';
   const paginacion = document.getElementById('paginacionRemitidos');
   if (paginacion) paginacion.innerHTML = '';
-  paginaActual = 1;
+  paginaActualRemitidos = 1;
   cargarRemitidos();
   // Reiniciar buscador
   const buscador = document.getElementById('buscadorRemitidos');
@@ -745,7 +759,7 @@ if (!window.isSPA) {
     const buscador = document.getElementById('buscadorRemitidos');
     if (buscador) {
       buscador.addEventListener('input', () => {
-        paginaActual = 1;
+        paginaActualRemitidos = 1;
         aplicarFiltroYPaginacion();
       });
     }

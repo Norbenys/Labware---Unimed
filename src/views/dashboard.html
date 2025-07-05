@@ -50,6 +50,19 @@
   .status-validada { background-color: #d4edda; color: #155724; }
   .status-remitida { background-color: #f8d7da; color: #721c24; }
   .status-entregada { background-color: #e2e3e5; color: #383d41; }
+  
+  .chart {
+    max-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 0;
+  }
+  .dashboard-chart-card .card-body {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
 </style>
 
 <div class="container-fluid py-2">
@@ -66,7 +79,7 @@
         <div class="card-header p-2 ps-3">
           <div class="d-flex justify-content-between">
             <div>
-              <p class="text-sm mb-0 text-capitalize">Órdenes Hoy</p>
+              <p class="text-sm mb-0 text-capitalize">Órdenes</p>
               <h4 class="mb-0" id="ordenesHoy">0</h4>
             </div>
             <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
@@ -85,7 +98,7 @@
         <div class="card-header p-2 ps-3">
           <div class="d-flex justify-content-between">
             <div>
-              <p class="text-sm mb-0 text-capitalize">En Análisis</p>
+              <p class="text-sm mb-0 text-capitalize">Análisis</p>
               <h4 class="mb-0" id="ordenesAnalisis">0</h4>
             </div>
             <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
@@ -139,15 +152,15 @@
     </div>
   </div>
   <!-- Gráficas -->
-  <div class="row">
+  <div class="row justify-content-center">
     <div class="col-lg-4 col-md-6 mt-4 mb-4">
-      <div class="card">
-        <div class="card-body">
-          <h6 class="mb-0">Órdenes por Estado</h6>
+      <div class="card h-100 dashboard-chart-card">
+        <div class="card-body d-flex flex-column">
+          <h6 class="mb-0">Órdenes por estado</h6>
           <p class="text-sm">Últimos 7 días</p>
-          <div class="pe-2">
-            <div class="chart">
-              <canvas id="chart-ordenes-estado" class="chart-canvas" height="170"></canvas>
+          <div class="flex-grow-1 d-flex align-items-center justify-content-center">
+            <div class="chart w-100">
+              <canvas id="chart-ordenes-estado" class="chart-canvas" height="150"></canvas>
             </div>
           </div>
           <hr class="dark horizontal">
@@ -159,13 +172,13 @@
       </div>
     </div>
     <div class="col-lg-4 col-md-6 mt-4 mb-4">
-      <div class="card">
-        <div class="card-body">
-          <h6 class="mb-0">Órdenes por Día</h6>
+      <div class="card h-100 dashboard-chart-card">
+        <div class="card-body d-flex flex-column">
+          <h6 class="mb-0">Órdenes por día</h6>
           <p class="text-sm">Tendencia semanal</p>
-          <div class="pe-2">
-            <div class="chart">
-              <canvas id="chart-ordenes-dia" class="chart-canvas" height="170"></canvas>
+          <div class="flex-grow-1 d-flex align-items-center justify-content-center">
+            <div class="chart w-100">
+              <canvas id="chart-ordenes-dia" class="chart-canvas" height="150"></canvas>
             </div>
           </div>
           <hr class="dark horizontal">
@@ -176,14 +189,14 @@
         </div>
       </div>
     </div>
-    <div class="col-lg-4 mt-4 mb-3">
-      <div class="card">
-        <div class="card-body">
-          <h6 class="mb-0">Pacientes Atendidos</h6>
+    <div class="col-lg-4 col-md-6 mt-4 mb-4">
+      <div class="card h-100 dashboard-chart-card">
+        <div class="card-body d-flex flex-column">
+          <h6 class="mb-0">Exámenes más realizados</h6>
           <p class="text-sm">Última semana</p>
-          <div class="pe-2">
-            <div class="chart">
-              <canvas id="chart-pacientes" class="chart-canvas" height="170"></canvas>
+          <div class="flex-grow-1 d-flex align-items-center justify-content-center">
+            <div class="chart w-100">
+              <canvas id="chart-pacientes" class="chart-canvas" height="150"></canvas>
             </div>
           </div>
           <hr class="dark horizontal">
@@ -195,68 +208,7 @@
       </div>
     </div>
   </div>
-  <!-- Tabla y Timeline -->
-  <div class="row mb-4">
-    <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
-      <div class="card">
-        <div class="card-header pb-0">
-          <div class="row">
-            <div class="col-lg-6 col-7">
-              <h6>Órdenes recientes</h6>
-              <p class="text-sm mb-0">
-                <i class="fa fa-check text-info" aria-hidden="true"></i>
-                <span class="font-weight-bold ms-1" id="ordenesRecientesCantidad">0</span> este mes
-              </p>
-            </div>
-            <div class="col-lg-6 col-5 my-auto text-end">
-              <div class="dropdown float-lg-end pe-4">
-                <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="fa fa-ellipsis-v text-secondary"></i>
-                </a>
-                <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
-                  <li><a class="dropdown-item border-radius-md" href="javascript:;">Exportar</a></li>
-                  <li><a class="dropdown-item border-radius-md" href="javascript:;">Ver todo</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="card-body px-0 pb-2">
-          <div class="table-responsive">
-            <table class="table align-items-center mb-0">
-              <thead>
-                <tr>
-                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Orden</th>
-                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Paciente</th>
-                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Estado</th>
-                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Fecha</th>
-                </tr>
-              </thead>
-              <tbody id="tablaOrdenesRecientes">
-                <!-- Aquí se inyectan las órdenes recientes -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-4 col-md-6">
-      <div class="card h-100">
-        <div class="card-header pb-0">
-          <h6>Resumen de actividad</h6>
-          <p class="text-sm">
-            <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
-            <span class="font-weight-bold" id="actividadPorcentaje">0%</span> este mes
-          </p>
-        </div>
-        <div class="card-body p-3">
-          <div class="timeline timeline-one-side" id="timelineActividad">
-            <!-- Aquí se inyecta el timeline -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- Fin del dashboard -->
 </div>
 
 <script src="../assets/js/plugins/chartjs.min.js"></script>

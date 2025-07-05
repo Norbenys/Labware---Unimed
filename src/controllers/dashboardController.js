@@ -12,7 +12,7 @@ router.get('/test', (req, res) => {
 router.get('/stats', async (req, res) => {
   console.log('🔍 Dashboard stats endpoint llamado');
   // Variables para cada estadística
-  let ordenesPorEstado = [], ordenesHoy = [{total: 0}], ordenesPendientes = [{total: 0}], ordenesAnalisis = [{total: 0}], ordenesValidadas = [{total: 0}], ordenesRemitidas = [{total: 0}], ordenesEntregadas = [{total: 0}], examenesPopulares = [], ordenesUltimos7Dias = [], pacientesNuevos = [{total: 0}];
+  let ordenesPorEstado = [], ordenesHoy = [{total: 0}], ordenesPendientes = [{total: 0}], ordenesAnalisis = [{total: 0}], ordenesValidadas = [{total: 0}], ordenesRemitidas = [{total: 0}], ordenesEntregadas = [{total: 0}], examenesPopulares = [], ordenesUltimos7Dias = [];
   try {
     // Estadísticas de órdenes por estado
     try {
@@ -100,11 +100,12 @@ router.get('/stats', async (req, res) => {
       console.log('Consultando exámenes más solicitados');
       [examenesPopulares] = await db.query(`
         SELECT 
+          e.codigo AS codigo,
           e.nombre AS examen,
           COUNT(oe.id) AS cantidad
         FROM examenes e
         JOIN orden_examen oe ON e.id = oe.id_examen
-        GROUP BY e.id, e.nombre
+        GROUP BY e.id, e.codigo, e.nombre
         ORDER BY cantidad DESC
         LIMIT 5
       `);
@@ -126,18 +127,6 @@ router.get('/stats', async (req, res) => {
     } catch (err) {
       console.error('❌ Error en ordenesUltimos7Dias:', err);
     }
-    // Pacientes nuevos este mes
-    try {
-      console.log('Consultando pacientes nuevos este mes');
-      [pacientesNuevos] = await db.query(`
-        SELECT COUNT(*) AS total
-        FROM pacientes 
-        WHERE MONTH(fecha_registro) = MONTH(CURDATE()) 
-        AND YEAR(fecha_registro) = YEAR(CURDATE())
-      `);
-    } catch (err) {
-      console.error('❌ Error en pacientesNuevos:', err);
-    }
     console.log('✅ Dashboard stats calculadas correctamente');
     res.json({
       success: true,
@@ -150,8 +139,7 @@ router.get('/stats', async (req, res) => {
         ordenesRemitidas: ordenesRemitidas[0]?.total || 0,
         ordenesEntregadas: ordenesEntregadas[0]?.total || 0,
         examenesPopulares,
-        ordenesUltimos7Dias,
-        pacientesNuevos: pacientesNuevos[0]?.total || 0
+        ordenesUltimos7Dias
       }
     });
   } catch (err) {

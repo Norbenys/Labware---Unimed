@@ -1,8 +1,8 @@
 (function() {
 // ================== Variables globales ==================
 let archivosGlobal = [];
-let paginaActual = 1;
-const registrosPorPagina = 4;
+let paginaActualArchivos = 1;
+const registrosPorPaginaArchivos = 4;
 
 // ================== Obtener archivos ==================
 async function cargarArchivos() {
@@ -57,28 +57,34 @@ function renderizarTabla(lista) {
 
 }
 
+function normalizar(str) {
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, ''); // Quita tildes
+}
+
 function aplicarFiltroYPaginacion() {
-  const filtro = document.getElementById('buscadorArchivos').value.trim().toLowerCase();
+  const filtro = normalizar(document.getElementById('buscadorArchivos').value.trim());
 
   // Filtrar datos
   const filtrados = archivosGlobal.filter(item => {
-    const cedula = item.cedula?.toString().toLowerCase() || '';
-    const nombres = item.nombres?.toLowerCase() || '';
-    const apellidos = item.apellidos?.toLowerCase() || '';
-    const examen = item.examen?.toLowerCase() || '';
-    const idOrden = item.id_orden?.toString() || '';
-    const fecha = item.fecha?.split('T')[0] || '';
-    const hora = item.hora || '';
+    const cedula = normalizar(item.cedula?.toString() || '');
+    const nombres = normalizar(item.nombres || '');
+    const apellidos = normalizar(item.apellidos || '');
+    const examen = normalizar(item.examen || '');
+    const idOrden = normalizar(item.id_orden?.toString() || '');
+    const fecha = normalizar(item.fecha?.split('T')[0] || '');
     const texto = `${cedula} ${nombres} ${apellidos} ${examen} ${idOrden} ${fecha}`;
     return texto.includes(filtro);
   });
 
   // Paginación
-  const totalPaginas = Math.ceil(filtrados.length / registrosPorPagina);
-  if (paginaActual > totalPaginas) paginaActual = 1;
+  const totalPaginas = Math.ceil(filtrados.length / registrosPorPaginaArchivos);
+  if (paginaActualArchivos > totalPaginas) paginaActualArchivos = 1;
 
-  const inicio = (paginaActual - 1) * registrosPorPagina;
-  const fin = inicio + registrosPorPagina;
+  const inicio = (paginaActualArchivos - 1) * registrosPorPaginaArchivos;
+  const fin = inicio + registrosPorPaginaArchivos;
   const paginaActualData = filtrados.slice(inicio, fin);
 
   // Renderizar
@@ -91,19 +97,19 @@ function aplicarFiltroYPaginacion() {
 
   if (totalPaginas > 1) {
     const maxVisible = 3;
-    let start = Math.max(1, paginaActual - Math.floor(maxVisible / 2));
+    let start = Math.max(1, paginaActualArchivos - Math.floor(maxVisible / 2));
     let end = start + maxVisible - 1;
     if (end > totalPaginas) {
       end = totalPaginas;
       start = Math.max(1, end - maxVisible + 1);
     }
 
-    if (paginaActual > 1) {
+    if (paginaActualArchivos > 1) {
       const btnPrev = document.createElement('button');
       btnPrev.textContent = '«';
       btnPrev.className = 'btn btn-outline-dark btn-sm mx-1';
       btnPrev.onclick = () => {
-        paginaActual--;
+        paginaActualArchivos--;
         aplicarFiltroYPaginacion();
       };
       paginacion.appendChild(btnPrev);
@@ -111,27 +117,32 @@ function aplicarFiltroYPaginacion() {
 
     for (let i = start; i <= end; i++) {
       const btn = document.createElement('button');
-      btn.className = `btn btn-sm mx-1 ${i === paginaActual ? 'btn-dark' : 'btn-outline-dark'}`;
+      btn.className = `btn btn-sm mx-1 ${i === paginaActualArchivos ? 'btn-dark' : 'btn-outline-dark'}`;
       btn.textContent = i;
       btn.onclick = () => {
-        paginaActual = i;
+        paginaActualArchivos = i;
         aplicarFiltroYPaginacion();
       };
       paginacion.appendChild(btn);
     }
 
-    if (paginaActual < totalPaginas) {
+    if (paginaActualArchivos < totalPaginas) {
       const btnNext = document.createElement('button');
       btnNext.textContent = '»';
       btnNext.className = 'btn btn-outline-dark btn-sm mx-1';
       btnNext.onclick = () => {
-        paginaActual++;
+        paginaActualArchivos++;
         aplicarFiltroYPaginacion();
       };
       paginacion.appendChild(btnNext);
     }
   }
 }
+
+document.getElementById('buscadorArchivos').addEventListener('input', () => {
+  paginaActualArchivos = 1;
+  aplicarFiltroYPaginacion();
+});
 
 // ================== Ver resultados validados ==================
 async function verResultados(id_orden_examen, id_orden) {
@@ -181,7 +192,7 @@ function initArchive() {
   if (tbody) tbody.innerHTML = '';
   const paginacion = document.getElementById('paginacionArchivos');
   if (paginacion) paginacion.innerHTML = '';
-  paginaActual = 1;
+  paginaActualArchivos = 1;
   cargarArchivos();
   // Reiniciar buscador
   const buscador = document.getElementById('buscadorArchivos');
@@ -196,7 +207,7 @@ if (!window.isSPA) {
     const buscador = document.getElementById('buscadorArchivos');
     if (buscador) {
       buscador.addEventListener('input', () => {
-        paginaActual = 1;
+        paginaActualArchivos = 1;
         aplicarFiltroYPaginacion();
       });
     }

@@ -1,8 +1,8 @@
 (function() {
 // ================== Variables globales ==================
 let validadosGlobal = [];
-let paginaActual = 1;
-const registrosPorPagina = 6;
+let paginaActualValidados = 1;
+const registrosPorPaginaValidados = 6;
 
 // ================== Obtener validados ==================
 async function cargarValidados() {
@@ -65,79 +65,92 @@ function renderizarTabla(lista) {
   });
 }
 
-function aplicarFiltroYPaginacion() {
-  const filtro = document.getElementById('buscadorValidados').value.trim().toLowerCase();
-  const filas = Array.from(document.querySelectorAll('#validadosTableBody tr'));
+function normalizar(str) {
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, ''); // Quita tildes
+}
 
-  const filasFiltradas = filas.filter(fila => {
-    const paciente = fila.children[1]?.textContent.toLowerCase() || '';
-    const examen = fila.children[4]?.textContent.toLowerCase() || '';
-    return paciente.includes(filtro) || examen.includes(filtro);
+function aplicarFiltroYPaginacion() {
+  const filtro = normalizar(document.getElementById('buscadorValidados').value.trim());
+
+  // Filtrar datos
+  const filtrados = validadosGlobal.filter(item => {
+    const cedula = normalizar(item.cedula?.toString() || '');
+    const nombres = normalizar(item.nombres || '');
+    const apellidos = normalizar(item.apellidos || '');
+    const examen = normalizar(item.examen || '');
+    const idOrden = normalizar(item.id_orden?.toString() || '');
+    const fecha = normalizar(item.fecha?.split('T')[0] || '');
+    const texto = `${cedula} ${nombres} ${apellidos} ${examen} ${idOrden} ${fecha}`;
+    return texto.includes(filtro);
   });
 
-  const totalPaginas = Math.ceil(filasFiltradas.length / registrosPorPagina);
-  if (paginaActual > totalPaginas) paginaActual = 1;
+  // Paginación
+  const totalPaginas = Math.ceil(filtrados.length / registrosPorPaginaValidados);
+  if (paginaActualValidados > totalPaginas) paginaActualValidados = 1;
 
-  filas.forEach(fila => fila.style.display = 'none');
+  const inicio = (paginaActualValidados - 1) * registrosPorPaginaValidados;
+  const fin = inicio + registrosPorPaginaValidados;
+  const paginaActualData = filtrados.slice(inicio, fin);
 
-  const inicio = (paginaActual - 1) * registrosPorPagina;
-  const fin = inicio + registrosPorPagina;
-  filasFiltradas.slice(inicio, fin).forEach(fila => fila.style.display = '');
+  // Renderizar
+  renderizarTabla(paginaActualData);
 
+  // Crear paginación solo si hay más de una página
   const paginacion = document.getElementById('paginacionValidados');
   if (!paginacion) return;
-
-  if (totalPaginas <= 1) {
-    paginacion.innerHTML = '';
-    paginacion.style.display = 'none';
-    return;
-  } else {
-    paginacion.style.display = 'flex';
-  }
-
   paginacion.innerHTML = '';
 
-  const maxVisible = 3;
-  let start = Math.max(1, paginaActual - Math.floor(maxVisible / 2));
-  let end = start + maxVisible - 1;
-  if (end > totalPaginas) {
-    end = totalPaginas;
-    start = Math.max(1, end - maxVisible + 1);
-  }
+  if (totalPaginas > 1) {
+    const maxVisible = 3;
+    let start = Math.max(1, paginaActualValidados - Math.floor(maxVisible / 2));
+    let end = start + maxVisible - 1;
+    if (end > totalPaginas) {
+      end = totalPaginas;
+      start = Math.max(1, end - maxVisible + 1);
+    }
 
-  if (paginaActual > 1) {
-    const btnPrev = document.createElement('button');
-    btnPrev.textContent = '«';
-    btnPrev.className = 'btn btn-outline-dark btn-sm mx-1';
-    btnPrev.onclick = () => {
-      paginaActual--;
-      aplicarFiltroYPaginacion();
-    };
-    paginacion.appendChild(btnPrev);
-  }
+    if (paginaActualValidados > 1) {
+      const btnPrev = document.createElement('button');
+      btnPrev.textContent = '«';
+      btnPrev.className = 'btn btn-outline-dark btn-sm mx-1';
+      btnPrev.onclick = () => {
+        paginaActualValidados--;
+        aplicarFiltroYPaginacion();
+      };
+      paginacion.appendChild(btnPrev);
+    }
 
-  for (let i = start; i <= end; i++) {
-    const btn = document.createElement('button');
-    btn.className = `btn btn-sm mx-1 ${i === paginaActual ? 'btn-dark' : 'btn-outline-dark'}`;
-    btn.textContent = i;
-    btn.onclick = () => {
-      paginaActual = i;
-      aplicarFiltroYPaginacion();
-    };
-    paginacion.appendChild(btn);
-  }
+    for (let i = start; i <= end; i++) {
+      const btn = document.createElement('button');
+      btn.className = `btn btn-sm mx-1 ${i === paginaActualValidados ? 'btn-dark' : 'btn-outline-dark'}`;
+      btn.textContent = i;
+      btn.onclick = () => {
+        paginaActualValidados = i;
+        aplicarFiltroYPaginacion();
+      };
+      paginacion.appendChild(btn);
+    }
 
-  if (paginaActual < totalPaginas) {
-    const btnNext = document.createElement('button');
-    btnNext.textContent = '»';
-    btnNext.className = 'btn btn-outline-dark btn-sm mx-1';
-    btnNext.onclick = () => {
-      paginaActual++;
-      aplicarFiltroYPaginacion();
-    };
-    paginacion.appendChild(btnNext);
+    if (paginaActualValidados < totalPaginas) {
+      const btnNext = document.createElement('button');
+      btnNext.textContent = '»';
+      btnNext.className = 'btn btn-outline-dark btn-sm mx-1';
+      btnNext.onclick = () => {
+        paginaActualValidados++;
+        aplicarFiltroYPaginacion();
+      };
+      paginacion.appendChild(btnNext);
+    }
   }
 }
+
+document.getElementById('buscadorValidados').addEventListener('input', () => {
+  paginaActualValidados = 1;
+  aplicarFiltroYPaginacion();
+});
 
 // ================== Ver resultados ==================
 async function verResultados(id_orden_examen, id_orden) {
@@ -279,7 +292,7 @@ function initValidated() {
   if (tbody) tbody.innerHTML = '';
   const paginacion = document.getElementById('paginacionValidados');
   if (paginacion) paginacion.innerHTML = '';
-  paginaActual = 1;
+  paginaActualValidados = 1;
   cargarValidados();
   // Reiniciar buscador
   const buscador = document.getElementById('buscadorValidados');
@@ -294,7 +307,7 @@ if (!window.isSPA) {
     const buscador = document.getElementById('buscadorValidados');
     if (buscador) {
       buscador.addEventListener('input', () => {
-        paginaActual = 1;
+        paginaActualValidados = 1;
         aplicarFiltroYPaginacion();
       });
     }

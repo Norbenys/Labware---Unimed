@@ -369,8 +369,25 @@
 
         // 🧭 Actualiza el título del breadcrumb
         if (breadcrumbTitle) {
-          const titulo = cleanUrl.split("/").pop().replace(".html", "");
-          breadcrumbTitle.textContent = titulo.charAt(0).toUpperCase() + titulo.slice(1);
+          const traducciones = {
+            'dashboard': 'Panel',
+            'user': 'Usuarios',
+            'patient': 'Pacientes',
+            'doctor': 'Doctores',
+            'exam': 'Exámenes',
+            'quoter': 'Cotizador',
+            'order': 'Órdenes',
+            'report': 'Análisis',
+            'validated': 'Validación',
+            'remission': 'Remisión',
+            'archive': 'Archivo',
+            'parameter': 'Parámetros',
+            'index': 'Panel de control',
+            'neworder': 'Nueva orden',
+            // Agrega más si tienes otros módulos
+          };
+          const modulo = cleanUrl.split("/").pop().replace(".html", "");
+          breadcrumbTitle.textContent = traducciones[modulo] || modulo.charAt(0).toUpperCase() + modulo.slice(1);
         }
 
         // 🔁 Elimina el script anterior si existe
