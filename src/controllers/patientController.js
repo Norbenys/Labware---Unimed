@@ -183,6 +183,25 @@ router.post('/buscarCedula', async (req, res) => {
   }
 });
 
+// ===================== OBTENER PACIENTES POR DÍA (ÚLTIMOS 7 DÍAS) =====================
+router.get('/por-dia', async (req, res) => {
+  try {
+    const [results] = await db.query(`
+      SELECT 
+        DATE(fecha_registro) AS fecha,
+        COUNT(*) AS cantidad
+      FROM pacientes 
+      WHERE fecha_registro >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+      GROUP BY DATE(fecha_registro)
+      ORDER BY fecha
+    `);
+    res.json({ success: true, pacientesPorDia: results });
+  } catch (err) {
+    console.error('Error al obtener pacientes por día:', err);
+    res.status(500).json({ success: false, message: 'Error al obtener los pacientes por día.' });
+  }
+});
+
 // ===================== BUSCAR PACIENTE POR FECHA =====================
 router.post('/buscarPorFecha', async (req, res) => {
   const { fecha_nacimiento } = req.body;

@@ -30,8 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ===================== neworder.js COMPLETO =====================
 
-let idPacienteFinal = null;
-let examenesSeleccionados = [];
+// Verificar si ya se cargó para evitar duplicados
+if (window.neworderLoaded) {
+  console.log("⚠️ neworder.js ya fue cargado, evitando duplicación");
+} else {
+  window.neworderLoaded = true;
+  
+  let idPacienteFinal = null;
+  let examenesSeleccionados = [];
 
 // ===================== DOMContentLoaded =====================
 document.addEventListener('DOMContentLoaded', () => {
@@ -249,8 +255,10 @@ document.getElementById("buscadorCodigoExamen").addEventListener("input", () => 
 
 document.addEventListener("click", (e) => {
   if (!e.target.closest(".position-relative")) {
-    document.getElementById("dropdownNombreResultados").innerHTML = '';
-    document.getElementById("dropdownCodigoResultados").innerHTML = '';
+    const dropdownNombre = document.getElementById("dropdownNombreResultados");
+    const dropdownCodigo = document.getElementById("dropdownCodigoResultados");
+    if (dropdownNombre) dropdownNombre.innerHTML = '';
+    if (dropdownCodigo) dropdownCodigo.innerHTML = '';
   }
 });
 
@@ -258,8 +266,15 @@ async function buscarExamenes(tipo) {
   const inputId = tipo === 'nombre' ? 'buscadorNombreExamen' : 'buscadorCodigoExamen';
   const dropdownId = tipo === 'nombre' ? 'dropdownNombreResultados' : 'dropdownCodigoResultados';
 
-  const valor = document.getElementById(inputId).value.trim();
+  const input = document.getElementById(inputId);
   const dropdown = document.getElementById(dropdownId);
+  
+  if (!input || !dropdown) {
+    console.warn("⚠️ Elementos de búsqueda no encontrados");
+    return;
+  }
+
+  const valor = input.value.trim();
 
   if (valor.length < 2) {
     dropdown.innerHTML = '';
@@ -328,8 +343,19 @@ function eliminarExamen(index) {
 }
 
 function renderizarTablaSeleccionados() {
-  const tabla = document.getElementById("tablaExamenesSeleccionados").querySelector("tbody");
-  tabla.innerHTML = '';
+  const tabla = document.getElementById("tablaExamenesSeleccionados");
+  if (!tabla) {
+    console.warn("⚠️ Tabla de exámenes no encontrada");
+    return;
+  }
+  
+  const tbody = tabla.querySelector("tbody");
+  if (!tbody) {
+    console.warn("⚠️ Tbody de tabla no encontrado");
+    return;
+  }
+  
+  tbody.innerHTML = '';
 
   let total = 0;
 
@@ -346,7 +372,7 @@ function renderizarTablaSeleccionados() {
         <button class="btn btn-danger btn-sm" onclick="eliminarExamen(${index})">Eliminar</button>
       </td>
     `;
-    tabla.appendChild(fila);
+    tbody.appendChild(fila);
   });
 
   // Agregar fila del total
@@ -358,7 +384,7 @@ function renderizarTablaSeleccionados() {
   <td class="fw-bold text-success">Bs. ${total.toFixed(2)}</td>
   <td colspan="2"></td>
 `;
-  tabla.appendChild(filaTotal);
+  tbody.appendChild(filaTotal);
 
 }
 
@@ -602,3 +628,4 @@ function initNeworder() {
   cargarSexos();
 }
 window.initNeworder = initNeworder;
+} // Cierre del bloque if (window.neworderLoaded)

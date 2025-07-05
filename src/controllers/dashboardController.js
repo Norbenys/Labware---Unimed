@@ -11,93 +11,134 @@ router.get('/test', (req, res) => {
 // ===================== ESTADÍSTICAS GENERALES DEL DASHBOARD =====================
 router.get('/stats', async (req, res) => {
   console.log('🔍 Dashboard stats endpoint llamado');
+  // Variables para cada estadística
+  let ordenesPorEstado = [], ordenesHoy = [{total: 0}], ordenesPendientes = [{total: 0}], ordenesAnalisis = [{total: 0}], ordenesValidadas = [{total: 0}], ordenesRemitidas = [{total: 0}], ordenesEntregadas = [{total: 0}], examenesPopulares = [], ordenesUltimos7Dias = [], pacientesNuevos = [{total: 0}];
   try {
     // Estadísticas de órdenes por estado
-    const [ordenesPorEstado] = await db.query(`
-      SELECT 
-        e.nombre AS estado,
-        COUNT(o.id) AS cantidad
-      FROM estado e
-      LEFT JOIN ordenes o ON e.id = o.id_estado
-      GROUP BY e.id, e.nombre
-      ORDER BY e.id
-    `);
-
-    // Órdenes de hoy
-    const [ordenesHoy] = await db.query(`
-      SELECT COUNT(*) AS total
-      FROM ordenes 
-      WHERE DATE(fecha) = CURDATE()
-    `);
-
+    try {
+      console.log('Consultando órdenes por estado');
+      [ordenesPorEstado] = await db.query(`
+        SELECT 
+          e.nombre AS estado,
+          COUNT(o.id) AS cantidad
+        FROM estado e
+        LEFT JOIN ordenes o ON e.id = o.id_estado
+        GROUP BY e.id, e.nombre
+        ORDER BY e.id
+      `);
+    } catch (err) {
+      console.error('❌ Error en ordenesPorEstado:', err);
+    }
+    // Órdenes Hoy (solo estado 1 y 2)
+    try {
+      console.log('Consultando órdenes hoy (estado 1 y 2)');
+      [ordenesHoy] = await db.query(`
+        SELECT COUNT(*) AS total
+        FROM ordenes 
+        WHERE id_estado IN (1, 2)
+      `);
+    } catch (err) {
+      console.error('❌ Error en ordenesHoy:', err);
+    }
     // Órdenes pendientes (estado < 3)
-    const [ordenesPendientes] = await db.query(`
-      SELECT COUNT(*) AS total
-      FROM ordenes 
-      WHERE id_estado < 3
-    `);
-
+    try {
+      console.log('Consultando órdenes pendientes');
+      [ordenesPendientes] = await db.query(`
+        SELECT COUNT(*) AS total
+        FROM ordenes 
+        WHERE id_estado < 3
+      `);
+    } catch (err) {
+      console.error('❌ Error en ordenesPendientes:', err);
+    }
     // Órdenes en análisis (estado 3)
-    const [ordenesAnalisis] = await db.query(`
-      SELECT COUNT(*) AS total
-      FROM ordenes 
-      WHERE id_estado = 3
-    `);
-
-    // Órdenes validadas (estado 5)
-    const [ordenesValidadas] = await db.query(`
-      SELECT COUNT(*) AS total
-      FROM ordenes 
-      WHERE id_estado = 5
-    `);
-
+    try {
+      console.log('Consultando órdenes en análisis');
+      [ordenesAnalisis] = await db.query(`
+        SELECT COUNT(*) AS total
+        FROM ordenes 
+        WHERE id_estado = 3
+      `);
+    } catch (err) {
+      console.error('❌ Error en ordenesAnalisis:', err);
+    }
+    // Órdenes validadas (estado 7)
+    try {
+      console.log('Consultando órdenes validadas');
+      [ordenesValidadas] = await db.query(`
+        SELECT COUNT(*) AS total
+        FROM ordenes 
+        WHERE id_estado = 7
+      `);
+    } catch (err) {
+      console.error('❌ Error en ordenesValidadas:', err);
+    }
     // Órdenes remitidas (estado 7)
-    const [ordenesRemitidas] = await db.query(`
-      SELECT COUNT(*) AS total
-      FROM ordenes 
-      WHERE id_estado = 7
-    `);
-
-    // Órdenes entregadas (estado 8 y 9)
-    const [ordenesEntregadas] = await db.query(`
-      SELECT COUNT(*) AS total
-      FROM ordenes 
-      WHERE id_estado IN (8, 9)
-    `);
-
+    try {
+      console.log('Consultando órdenes remitidas');
+      [ordenesRemitidas] = await db.query(`
+        SELECT COUNT(*) AS total
+        FROM ordenes 
+        WHERE id_estado = 7
+      `);
+    } catch (err) {
+      console.error('❌ Error en ordenesRemitidas:', err);
+    }
+    // Órdenes entregadas (estado 8)
+    try {
+      console.log('Consultando órdenes entregadas');
+      [ordenesEntregadas] = await db.query(`
+        SELECT COUNT(*) AS total
+        FROM ordenes 
+        WHERE id_estado = 8
+      `);
+    } catch (err) {
+      console.error('❌ Error en ordenesEntregadas:', err);
+    }
     // Exámenes más solicitados
-    const [examenesPopulares] = await db.query(`
-      SELECT 
-        e.nombre AS examen,
-        COUNT(oe.id) AS cantidad
-      FROM examenes e
-      JOIN orden_examen oe ON e.id = oe.id_examen
-      GROUP BY e.id, e.nombre
-      ORDER BY cantidad DESC
-      LIMIT 5
-    `);
-
+    try {
+      console.log('Consultando exámenes más solicitados');
+      [examenesPopulares] = await db.query(`
+        SELECT 
+          e.nombre AS examen,
+          COUNT(oe.id) AS cantidad
+        FROM examenes e
+        JOIN orden_examen oe ON e.id = oe.id_examen
+        GROUP BY e.id, e.nombre
+        ORDER BY cantidad DESC
+        LIMIT 5
+      `);
+    } catch (err) {
+      console.error('❌ Error en examenesPopulares:', err);
+    }
     // Órdenes de los últimos 7 días
-    const [ordenesUltimos7Dias] = await db.query(`
-      SELECT 
-        DATE(fecha) AS fecha,
-        COUNT(*) AS cantidad
-      FROM ordenes 
-      WHERE fecha >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-      GROUP BY DATE(fecha)
-      ORDER BY fecha
-    `);
-
+    try {
+      console.log('Consultando órdenes de los últimos 7 días');
+      [ordenesUltimos7Dias] = await db.query(`
+        SELECT 
+          DATE(fecha) AS fecha,
+          COUNT(*) AS cantidad
+        FROM ordenes 
+        WHERE fecha >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        GROUP BY DATE(fecha)
+        ORDER BY fecha
+      `);
+    } catch (err) {
+      console.error('❌ Error en ordenesUltimos7Dias:', err);
+    }
     // Pacientes nuevos este mes
-    const [pacientesNuevos] = await db.query(`
-      SELECT COUNT(*) AS total
-      FROM pacientes 
-      WHERE MONTH(fecha_registro) = MONTH(CURDATE()) 
-      AND YEAR(fecha_registro) = YEAR(CURDATE())
-    `);
-
+    try {
+      console.log('Consultando pacientes nuevos este mes');
+      [pacientesNuevos] = await db.query(`
+        SELECT COUNT(*) AS total
+        FROM pacientes 
+        WHERE MONTH(fecha_registro) = MONTH(CURDATE()) 
+        AND YEAR(fecha_registro) = YEAR(CURDATE())
+      `);
+    } catch (err) {
+      console.error('❌ Error en pacientesNuevos:', err);
+    }
     console.log('✅ Dashboard stats calculadas correctamente');
-
     res.json({
       success: true,
       stats: {
@@ -114,7 +155,7 @@ router.get('/stats', async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('❌ Error al obtener estadísticas del dashboard:', err);
+    console.error('❌ Error general al obtener estadísticas del dashboard:', err);
     res.status(500).json({ success: false, message: 'Error al obtener las estadísticas' });
   }
 });

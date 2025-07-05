@@ -3,6 +3,29 @@ const router = express.Router();
 const db = require('../database/connection');
 
 // ===================== OBTENER ÓRDENES =====================
+router.get('/', async (req, res) => {
+  try {
+    const [results] = await db.query(`
+    SELECT 
+  o.id AS id_orden,
+  CONCAT(p.nombres, ' ', p.apellidos) AS paciente,
+  o.fecha,
+  o.hora,
+  e.nombre AS estado
+FROM ordenes o
+LEFT JOIN pacientes p ON o.id_paciente = p.id
+LEFT JOIN estado e ON o.id_estado = e.id
+ORDER BY o.id DESC
+LIMIT 10;
+    `);
+
+    res.json({ success: true, ordenes: results });
+  } catch (err) {
+    console.error('Error al obtener órdenes:', err);
+    res.status(500).json({ success: false, message: 'Error al obtener las órdenes.' });
+  }
+});
+
 router.post('/', async (req, res) => {
   try {
     const [results] = await db.query(`
@@ -35,6 +58,44 @@ router.get('/estados', async (req, res) => {
   } catch (err) {
     console.error('Error al obtener los estados:', err);
     res.status(500).json({ success: false, message: 'Error al obtener los estados.' });
+  }
+});
+
+// ===================== OBTENER ÓRDENES POR DÍA (ÚLTIMOS 7 DÍAS) =====================
+router.get('/por-dia', async (req, res) => {
+  try {
+    const [results] = await db.query(`
+      SELECT 
+        DATE(fecha) AS fecha,
+        COUNT(*) AS cantidad
+      FROM ordenes 
+      WHERE fecha >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+      GROUP BY DATE(fecha)
+      ORDER BY fecha
+    `);
+    res.json({ success: true, ordenesPorDia: results });
+  } catch (err) {
+    console.error('Error al obtener órdenes por día:', err);
+    res.status(500).json({ success: false, message: 'Error al obtener las órdenes por día.' });
+  }
+});
+
+// ===================== OBTENER ESTADÍSTICAS POR ESTADO =====================
+router.get('/estadisticas', async (req, res) => {
+  try {
+    const [results] = await db.query(`
+      SELECT 
+        e.nombre AS estado,
+        COUNT(o.id) AS cantidad
+      FROM estado e
+      LEFT JOIN ordenes o ON e.id = o.id_estado
+      GROUP BY e.id, e.nombre
+      ORDER BY e.id
+    `);
+    res.json({ success: true, estadisticas: results });
+  } catch (err) {
+    console.error('Error al obtener estadísticas:', err);
+    res.status(500).json({ success: false, message: 'Error al obtener las estadísticas.' });
   }
 });
 
