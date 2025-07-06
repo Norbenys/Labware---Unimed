@@ -186,9 +186,12 @@
           </a>
         </li>
         <li class="nav-item dropdown pe-3 d-flex align-items-center">
-          <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          <a href="javascript:;" class="nav-link text-body p-0 position-relative" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="material-symbols-rounded">notifications</i>
           </a>
+          <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
+            <!-- Las notificaciones se cargarán dinámicamente aquí -->
+          </ul>
         </li>
         <li class="nav-item d-flex align-items-center">
           <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
@@ -287,6 +290,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="../js/auth.js"></script>
+<script src="../js/notifications.js"></script>
 <script>
   var win = navigator.platform.indexOf('Win') > -1;
   if (win && document.querySelector('#sidenav-scrollbar')) {

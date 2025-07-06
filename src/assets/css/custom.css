@@ -1,4 +1,3 @@
-
 .scroll-wrapper {
   height: calc(100vh - 100px); /* ajusta si tienes header arriba */
   overflow-y: auto !important;
@@ -31,4 +30,40 @@ html, body {
 
 #sidenav-main {
   overflow: hidden !important;
+}
+
+/* Forzar visibilidad y posición del dropdown de notificaciones */
+.dropdown-menu[aria-labelledby="dropdownMenuButton"].show {
+  display: block !important;
+  z-index: 9999 !important;
+  right: 0 !important;
+  left: auto !important;
+  min-width: 300px;
+}
+
+/* Colores personalizados Unimed para el login */
+
+/* Botón principal de login */
+.btn-unimed {
+  background: #26b9d8 !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 4px 20px 0 rgba(38,185,216,0.14), 0 7px 10px -5px rgba(38,185,216,0.4) !important;
+  transition: background 0.2s;
+}
+.btn-unimed:hover, .btn-unimed:focus {
+  background: #1ca1bb !important;
+}
+
+/* Fuerza el borde verde Unimed en los inputs de login anulando el rosado */
+.input-group.input-group-outline .form-control,
+.input-group.input-group-outline.is-focused .form-label+.form-control,
+.input-group.input-group-outline.is-filled .form-label+.form-control {
+  border-color: #b9d32c !important;
+  box-shadow: 0 0 0 2px rgba(185,211,44,0.2) !important;
+  background-image: none !important;
+}
+.input-group.input-group-outline.is-focused .form-label,
+.input-group.input-group-outline.is-filled .form-label {
+  color: #b9d32c !important;
 }

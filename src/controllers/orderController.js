@@ -99,6 +99,37 @@ router.get('/estadisticas', async (req, res) => {
   }
 });
 
+// ===================== OBTENER NOTIFICACIONES DE ÓRDENES =====================
+router.get('/notificaciones', async (req, res) => {
+  try {
+    const [results] = await db.query(`
+      SELECT 
+        SUM(CASE WHEN o.id_estado IN (1, 2) THEN 1 ELSE 0 END) AS nuevas,
+        SUM(CASE WHEN o.id_estado = 3 THEN 1 ELSE 0 END) AS analisis,
+        SUM(CASE WHEN o.id_estado = 5 THEN 1 ELSE 0 END) AS validar,
+        SUM(CASE WHEN o.id_estado = 7 THEN 1 ELSE 0 END) AS entregar
+      FROM ordenes o
+    `);
+
+    // Convertir los resultados a números para evitar concatenaciones de strings
+    const notificaciones = {
+      nuevas: Number(results[0].nuevas) || 0,
+      analisis: Number(results[0].analisis) || 0,
+      validar: Number(results[0].validar) || 0,
+      entregar: Number(results[0].entregar) || 0
+    };
+    const total = notificaciones.nuevas + notificaciones.analisis + notificaciones.validar + notificaciones.entregar;
+
+    res.json({ 
+      success: true, 
+      notificaciones,
+      total
+    });
+  } catch (err) {
+    console.error('Error al obtener notificaciones:', err);
+    res.status(500).json({ success: false, message: 'Error al obtener las notificaciones.' });
+  }
+});
 
 // =================== Obtener una orden por ID ===================
 router.get('/:id', async (req, res) => {
@@ -180,7 +211,5 @@ router.delete('/delete/:id', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error al eliminar la orden.' });
   }
 });
-
-
 
 module.exports = router;
