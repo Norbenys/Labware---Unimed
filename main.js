@@ -1,4 +1,4 @@
-const { app: electronApp, BrowserWindow } = require('electron');
+const { app: electronApp, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -65,6 +65,14 @@ function createWindow() {
         nodeIntegration: true,
         contextIsolation: false
       }
+    });
+
+    // Configurar zoom al 90% por defecto
+    win.webContents.setZoomFactor(0.90);
+    
+    // Asegurar que el zoom se mantenga después de cargar la página
+    win.webContents.on('did-finish-load', () => {
+      win.webContents.setZoomFactor(0.90);
     });
 
     // Configurar Content Security Policy

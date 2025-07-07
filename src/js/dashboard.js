@@ -1,3 +1,5 @@
+console.log('DASHBOARD.JS CARGADO');
+
 async function initDashboard() {
   try {
     console.log('🚀 Iniciando dashboard...');
@@ -14,26 +16,48 @@ async function initDashboard() {
     }
 
     // Llenar tarjetas de resumen
-    document.getElementById('ordenesHoy').textContent = stats.stats.ordenesHoy;
-    document.getElementById('ordenesHoyPorcentaje').textContent = '+12%';
-    document.getElementById('ordenesAnalisis').textContent = stats.stats.ordenesAnalisis;
-    document.getElementById('ordenesAnalisisPorcentaje').textContent = '+8%';
-    document.getElementById('ordenesValidadas').textContent = stats.stats.ordenesValidadas;
-    document.getElementById('ordenesValidadasPorcentaje').textContent = '+15%';
-    document.getElementById('ordenesEntregadas').textContent = stats.stats.ordenesEntregadas;
-    document.getElementById('ordenesEntregadasPorcentaje').textContent = '+20%';
+    const elOrdenesHoy = document.getElementById('ordenesHoy');
+    if (elOrdenesHoy) elOrdenesHoy.textContent = stats.stats.ordenesHoy;
+    const elOrdenesHoyPorcentaje = document.getElementById('ordenesHoyPorcentaje');
+    if (elOrdenesHoyPorcentaje) elOrdenesHoyPorcentaje.textContent = '+12%';
+    const elOrdenesAnalisis = document.getElementById('ordenesAnalisis');
+    if (elOrdenesAnalisis) elOrdenesAnalisis.textContent = stats.stats.ordenesAnalisis;
+    const elOrdenesAnalisisPorcentaje = document.getElementById('ordenesAnalisisPorcentaje');
+    if (elOrdenesAnalisisPorcentaje) elOrdenesAnalisisPorcentaje.textContent = '+8%';
+    const elOrdenesValidadas = document.getElementById('ordenesValidadas');
+    if (elOrdenesValidadas) elOrdenesValidadas.textContent = stats.stats.ordenesValidadas;
+    const elOrdenesValidadasPorcentaje = document.getElementById('ordenesValidadasPorcentaje');
+    if (elOrdenesValidadasPorcentaje) elOrdenesValidadasPorcentaje.textContent = '+15%';
+    const elOrdenesEntregadas = document.getElementById('ordenesEntregadas');
+    if (elOrdenesEntregadas) elOrdenesEntregadas.textContent = stats.stats.ordenesEntregadas;
+    const elOrdenesEntregadasPorcentaje = document.getElementById('ordenesEntregadasPorcentaje');
+    if (elOrdenesEntregadasPorcentaje) elOrdenesEntregadasPorcentaje.textContent = '+20%';
 
     // 2. Crear gráficas con Chart.js
     if (window.Chart) {
       // Gráfica de órdenes por estado
       const ordenesPorEstado = stats.stats.ordenesPorEstado;
-      new Chart(document.getElementById('chart-ordenes-estado'), {
+      console.log('Estados recibidos:', ordenesPorEstado.map(e => e.estado));
+      // Mapeo de colores por estado (arcoíris, bien diferenciados)
+      const estadoColorMap = {
+        'Pendiente de pago': '#FF6B6B',      // rojo
+        'Pendiente de muestra': '#FFA94D',   // naranja
+        'Lista para análisis': '#FFD93D',    // amarillo
+        'En análisis': '#6BCB77',            // verde
+        'Pendiente de validación': '#4D96FF',// azul
+        'Validada': '#A66CFF',               // violeta
+        'Pendiente por entrega': '#38BDF8',  // turquesa
+        'Entregada': '#22C55E',              // verde pasto
+        'Anulada': '#A0AEC0',                // gris
+        'Otro': '#BDBDBD'                    // gris claro para cualquier otro
+      };
+      window.chartOrdenesEstado = new Chart(document.getElementById('chart-ordenes-estado'), {
         type: 'doughnut',
         data: {
           labels: ordenesPorEstado.map(item => item.estado),
           datasets: [{
             data: ordenesPorEstado.map(item => item.cantidad),
-            backgroundColor: ['#fbcf33', '#17c1e8', '#4CAF50', '#FFA726', '#e91e63'],
+            backgroundColor: ordenesPorEstado.map(item => estadoColorMap[item.estado] || estadoColorMap['Otro']),
             borderWidth: 0
           }]
         },
@@ -61,15 +85,15 @@ async function initDashboard() {
 
       // Gráfica de órdenes por día
       const ordenesUltimos7Dias = stats.stats.ordenesUltimos7Dias;
-      new Chart(document.getElementById('chart-ordenes-dia'), {
+      window.chartOrdenesDia = new Chart(document.getElementById('chart-ordenes-dia'), {
         type: 'line',
         data: {
           labels: ordenesUltimos7Dias.map(item => formatDate(item.fecha)),
           datasets: [{
             label: 'Órdenes',
             data: ordenesUltimos7Dias.map(item => item.cantidad),
-            borderColor: '#17c1e8',
-            backgroundColor: 'rgba(23,193,232,0.2)',
+            borderColor: '#4D96FF',
+            backgroundColor: 'rgba(77,150,255,0.2)',
             tension: 0.4,
             fill: true
           }]
@@ -86,14 +110,14 @@ async function initDashboard() {
 
       // Gráfica de exámenes más solicitados
       const examenesPopulares = stats.stats.examenesPopulares;
-      new Chart(document.getElementById('chart-pacientes'), {
+      window.chartPacientes = new Chart(document.getElementById('chart-pacientes'), {
         type: 'bar',
         data: {
           labels: examenesPopulares.map(item => item.codigo),
           datasets: [{
             label: 'Solicitudes',
             data: examenesPopulares.map(item => item.cantidad),
-            backgroundColor: '#4CAF50',
+            backgroundColor: '#4D96FF',
           }]
         },
         options: { 
@@ -162,3 +186,44 @@ function formatDate(dateString) {
 
 // Exportar función para uso global
 window.initDashboard = initDashboard;
+
+// Redibujar los gráficos después de que la ventana termine de cargar (por el zoom de Electron)
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    if (window.chartOrdenesEstado) {
+      window.chartOrdenesEstado.resize();
+      window.chartOrdenesEstado.update();
+    }
+    if (window.chartOrdenesDia) {
+      window.chartOrdenesDia.resize();
+      window.chartOrdenesDia.update();
+    }
+    if (window.chartPacientes) {
+      window.chartPacientes.resize();
+      window.chartPacientes.update();
+    }
+  }, 300); // 300 ms de retraso para asegurar que el layout esté listo
+});
+
+// Mostrar mensaje de bienvenida personalizado
+console.log('PRUEBA DASHBOARD');
+window.addEventListener('DOMContentLoaded', async () => {
+  let usuario = null;
+  if (window.require) {
+    const { ipcRenderer } = window.require('electron');
+    usuario = await ipcRenderer.invoke('get-usuario');
+    console.log('Usuario recibido por IPC:', usuario);
+  } else {
+    usuario = JSON.parse(sessionStorage.getItem('usuario'));
+    console.log('Usuario en sessionStorage:', usuario);
+  }
+  if (usuario && usuario.nombre && usuario.apellido) {
+    document.getElementById('bienvenida').innerText = `¡Bienvenido! ${usuario.nombre} ${usuario.apellido}`;
+    document.getElementById('bienvenida-desc').innerText = 'Panel de control del laboratorio clínico.';
+    console.log('Mensaje de bienvenida mostrado.');
+  } else {
+    document.getElementById('bienvenida').innerText = '¡Bienvenido!';
+    document.getElementById('bienvenida-desc').innerText = 'Panel de control del laboratorio clínico.';
+    console.log('Mensaje de bienvenida genérico mostrado.');
+  }
+});

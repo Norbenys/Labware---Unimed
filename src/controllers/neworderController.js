@@ -7,7 +7,7 @@ const db = require('../database/connection');
 // =============================
 
 router.post('/addOrder', async (req, res) => {
-  const { id_paciente } = req.body;
+  const { id_paciente, id_doctor } = req.body;
 
   if (!id_paciente) {
     return res.status(400).json({ success: false, message: 'ID de paciente requerido' });
@@ -15,9 +15,9 @@ router.post('/addOrder', async (req, res) => {
 
   try {
     const [result] = await db.query(`
-      INSERT INTO ordenes (id_paciente, fecha, hora, id_estado)
-      VALUES (?, CURDATE(), CURTIME(), ?)
-    `, [id_paciente, 1]);
+      INSERT INTO ordenes (id_paciente, fecha, hora, id_estado, id_doctor)
+      VALUES (?, CURDATE(), CURTIME(), ?, ?)
+    `, [id_paciente, 1, (id_doctor && id_doctor !== 'null') ? id_doctor : null]);
 
     console.log("✅ Orden insertada con ID:", result.insertId);
 

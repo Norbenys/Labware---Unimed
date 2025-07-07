@@ -1,6 +1,6 @@
 (() => {
 let paginaActualParametros = 1;
-const registrosPorPaginaParametros = 4;
+const registrosPorPaginaParametros = 6;
 
 // ======================= CONFIGURACIÓN =======================
 const BASE_URL = 'http://localhost:3000/api/parametros';
@@ -186,7 +186,8 @@ document.getElementById('formAgregarParametro').addEventListener('submit', async
       await Swal.fire({
         icon: 'warning',
         title: 'Código duplicado',
-        text: 'Ya existe un parámetro con este código. Por favor elige otro.'
+        text: 'Ya existe un parámetro con este código. Por favor elige otro.',
+        customClass: { popup: 'swal-mover-derecha' }
       });
       return;
     }
@@ -223,7 +224,8 @@ document.getElementById('formAgregarParametro').addEventListener('submit', async
       await Swal.fire({
         icon: 'success',
         title: 'Guardado',
-        text: '✅ Parámetro guardado correctamente'
+        text: '✅ Parámetro guardado correctamente',
+        customClass: { popup: 'swal-mover-derecha' }
       });
 
       document.getElementById('formAgregarParametro').reset();
@@ -235,7 +237,8 @@ document.getElementById('formAgregarParametro').addEventListener('submit', async
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: '❌ Error al guardar el parámetro'
+        text: '❌ Error al guardar el parámetro',
+        customClass: { popup: 'swal-mover-derecha' }
       });
     }
 
@@ -244,7 +247,8 @@ document.getElementById('formAgregarParametro').addEventListener('submit', async
     Swal.fire({
       icon: 'error',
       title: 'Error inesperado',
-      text: '❌ Ocurrió un error al guardar el parámetro.'
+      text: '❌ Ocurrió un error al guardar el parámetro.',
+      customClass: { popup: 'swal-mover-derecha' }
     });
   }
 });
@@ -410,7 +414,8 @@ document.getElementById('editParametroForm').addEventListener('submit', async fu
         icon: 'success',
         title: 'Actualizado',
         text: 'El parámetro ha sido actualizado correctamente.',
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Aceptar',
+        customClass: { popup: 'swal-mover-derecha' }
       }).then(() => {
         const modal = bootstrap.Modal.getInstance(document.getElementById('viewEditParametroModal'));
         modal.hide();
@@ -421,7 +426,8 @@ document.getElementById('editParametroForm').addEventListener('submit', async fu
         icon: 'error',
         title: 'Error',
         text: result.message || 'No se pudo actualizar el parámetro.',
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Aceptar',
+        customClass: { popup: 'swal-mover-derecha' }
       });
     }
   } catch (error) {
@@ -430,7 +436,8 @@ document.getElementById('editParametroForm').addEventListener('submit', async fu
       icon: 'error',
       title: 'Error',
       text: 'Ocurrió un error inesperado.',
-      confirmButtonText: 'Aceptar'
+      confirmButtonText: 'Aceptar',
+      customClass: { popup: 'swal-mover-derecha' }
     });
   }
 });
@@ -451,7 +458,8 @@ document.addEventListener('click', async (e) => {
     confirmButtonText: 'Sí, eliminar',
     cancelButtonText: 'Cancelar',
     confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6'
+    cancelButtonColor: '#3085d6',
+    customClass: { popup: 'swal-mover-derecha' }
   });
 
   if (confirmacion.isConfirmed) {
@@ -470,7 +478,8 @@ document.addEventListener('click', async (e) => {
         await Swal.fire({
           icon: 'success',
           title: 'Eliminado',
-          text: result.message
+          text: result.message,
+          customClass: { popup: 'swal-mover-derecha' }
         });
 
         // Si deseas recargar toda la tabla:
@@ -479,7 +488,8 @@ document.addEventListener('click', async (e) => {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: result.message || 'No se pudo eliminar el parámetro.'
+          text: result.message || 'No se pudo eliminar el parámetro.',
+          customClass: { popup: 'swal-mover-derecha' }
         });
       }
     } catch (err) {
@@ -487,7 +497,8 @@ document.addEventListener('click', async (e) => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Ocurrió un problema al intentar eliminar el parámetro.'
+        text: 'Ocurrió un problema al intentar eliminar el parámetro.',
+        customClass: { popup: 'swal-mover-derecha' }
       });
     }
   }
@@ -602,7 +613,8 @@ function aplicarFiltroYPaginarParametros() {
       confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6'
+      cancelButtonColor: '#3085d6',
+      customClass: { popup: 'swal-mover-derecha' }
     });
 
     if (confirmacion.isConfirmed) {
@@ -621,13 +633,15 @@ function aplicarFiltroYPaginarParametros() {
           await Swal.fire({
             icon: 'success',
             title: 'Eliminado',
-            text: result.message
+            text: result.message,
+            customClass: { popup: 'swal-mover-derecha' }
           });
         } else {
           Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: result.message || 'No se pudo eliminar el parámetro.'
+            text: result.message || 'No se pudo eliminar el parámetro.',
+            customClass: { popup: 'swal-mover-derecha' }
           });
         }
       } catch (err) {
@@ -635,7 +649,8 @@ function aplicarFiltroYPaginarParametros() {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Ocurrió un problema al intentar eliminar el parámetro.'
+          text: 'Ocurrió un problema al intentar eliminar el parámetro.',
+          customClass: { popup: 'swal-mover-derecha' }
         });
       }
     }

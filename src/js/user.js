@@ -1,6 +1,6 @@
 (() => {
 let paginaActual = 1;
-const registrosPorPagina = 5;
+const registrosPorPagina = 6;
 
 // =================== Cargar títulos (para el modal de agregar usuario) ===================
 async function cargarTitulos() {
@@ -249,7 +249,8 @@ document.getElementById('editUserForm').addEventListener('submit', async functio
         icon: 'success',
         title: '¡Éxito!',
         text: 'Usuario actualizado correctamente.',
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Aceptar',
+        customClass: { popup: 'swal-mover-derecha' }
       }).then(() => {
         const modal = bootstrap.Modal.getInstance(document.getElementById('viewEditUserModal'));
         modal.hide();
@@ -260,7 +261,8 @@ document.getElementById('editUserForm').addEventListener('submit', async functio
         icon: 'error',
         title: 'Error',
         text: result.message || 'No se pudo actualizar el usuario.',
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Aceptar',
+        customClass: { popup: 'swal-mover-derecha' }
       });
     }
   } catch (error) {
@@ -269,7 +271,8 @@ document.getElementById('editUserForm').addEventListener('submit', async functio
       icon: 'error',
       title: 'Error',
       text: 'Ocurrió un error inesperado.',
-      confirmButtonText: 'Aceptar'
+      confirmButtonText: 'Aceptar',
+      customClass: { popup: 'swal-mover-derecha' }
     });
   }
 });
@@ -284,10 +287,10 @@ document.getElementById('addUserForm').addEventListener('submit', async function
     apellidos: document.getElementById('apellidos').value,
     fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
     telefono: document.getElementById('telefono').value,
-    email: document.getElementById('email').value,
+    correo: document.getElementById('correo').value,
     titulo: document.getElementById('titulo').value,
     usuario: document.getElementById('usuario').value,
-    password: document.getElementById('password').value,
+    password: document.getElementById('contrasena').value,
     rol: document.getElementById('rol').value
   };
 
@@ -305,7 +308,8 @@ document.getElementById('addUserForm').addEventListener('submit', async function
         icon: 'success',
         title: '¡Éxito!',
         text: 'Usuario agregado correctamente.',
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Aceptar',
+        customClass: { popup: 'swal-mover-derecha' }
       }).then(() => {
         document.getElementById('addUserForm').reset();
         const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
@@ -317,7 +321,8 @@ document.getElementById('addUserForm').addEventListener('submit', async function
         icon: 'error',
         title: 'Error',
         text: data.message || 'No se pudo agregar el usuario.',
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Aceptar',
+        customClass: { popup: 'swal-mover-derecha' }
       });
     }
   } catch (error) {
@@ -326,7 +331,8 @@ document.getElementById('addUserForm').addEventListener('submit', async function
       icon: 'error',
       title: 'Error',
       text: 'Ocurrió un error inesperado.',
-      confirmButtonText: 'Aceptar'
+      confirmButtonText: 'Aceptar',
+      customClass: { popup: 'swal-mover-derecha' }
     });
   }
 });
@@ -353,7 +359,8 @@ document.addEventListener('click', async (e) => {
       confirmButtonText: 'Eliminar',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6'
+      cancelButtonColor: '#3085d6',
+      customClass: { popup: 'swal-mover-derecha' }
     });
 
     if (confirmacion.isConfirmed) {
@@ -369,16 +376,16 @@ document.addEventListener('click', async (e) => {
           const fila = document.querySelector(`tr[data-userid="${userId}"]`);
           if (fila) fila.remove();
 
-          await Swal.fire('Eliminado', result.message, 'success');
+          await Swal.fire('Eliminado', result.message, 'success', { customClass: { popup: 'swal-mover-derecha' } });
 
           // ✅ Si deseas actualizar toda la tabla, descomenta esta línea:
           // cargarUsuarios();
         } else {
-          Swal.fire('Error', result.message || 'No se pudo eliminar el usuario.', 'error');
+          Swal.fire('Error', result.message || 'No se pudo eliminar el usuario.', 'error', { customClass: { popup: 'swal-mover-derecha' } });
         }
       } catch (err) {
         console.error(err);
-        Swal.fire('Error', 'Hubo un problema al intentar eliminar.', 'error');
+        Swal.fire('Error', 'Hubo un problema al intentar eliminar.', 'error', { customClass: { popup: 'swal-mover-derecha' } });
       }
     }
   }

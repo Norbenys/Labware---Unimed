@@ -1,7 +1,7 @@
 
   <style>
  #buscadorRemitidos{
-      max-width: 250px;
+      max-width: 300px;
       /* Puedes cambiar a 250px, 400px, etc. */
     }
 /* Ajuste uniforme para celdas de órdenes */
@@ -60,6 +60,20 @@
   content: none !important;
 }
 
+/* Quitar borde verde del buscador de remitidos SIEMPRE */
+#buscadorRemitidos {
+  border-color: #ced4da !important;
+  box-shadow: none !important;
+}
+#buscadorRemitidos:focus {
+  border-color: #ced4da !important;
+  box-shadow: none !important;
+}
+.input-group-outline:has(#buscadorRemitidos) .form-control,
+.input-group-outline:has(#buscadorRemitidos) .form-control:focus {
+  border-color: #ced4da !important;
+  box-shadow: none !important;
+}
 
   </style>
 

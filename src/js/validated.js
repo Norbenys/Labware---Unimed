@@ -17,7 +17,12 @@ async function cargarValidados() {
     aplicarFiltroYPaginacion();
   } catch (err) {
     console.error('Error al cargar validados:', err);
-    Swal.fire({ icon: 'error', text: 'No se pudieron cargar los exámenes validados.' });
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudieron cargar los exámenes validados.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 
@@ -193,7 +198,12 @@ async function verResultados(id_orden_examen, id_orden) {
 
   } catch (err) {
     console.error('❌ Error al ver resultados:', err);
-    Swal.fire('Error', 'No se pudieron cargar los resultados', 'error');
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudieron cargar los resultados',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 
@@ -206,14 +216,24 @@ async function validarExamen(id_orden_examen) {
     });
     const data = await res.json();
     if (data.success) {
-      Swal.fire({ icon: 'success', text: 'Examen validado correctamente.' });
+      Swal.fire({
+        icon: 'success',
+        title: '¡Éxito!',
+        text: 'Examen validado correctamente.',
+        customClass: { popup: 'swal-mover-derecha' }
+      });
       cargarValidados();
     } else {
       throw new Error(data.message);
     }
   } catch (err) {
     console.error('❌ Error al validar examen:', err);
-    Swal.fire('Error', 'No se pudo validar el examen', 'error');
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudo validar el examen',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 
@@ -226,14 +246,24 @@ async function devolverExamen(id_orden_examen) {
     });
     const data = await res.json();
     if (data.success) {
-      Swal.fire({ icon: 'success', text: 'Examen devuelto a análisis.' });
+      Swal.fire({
+        icon: 'success',
+        title: '¡Éxito!',
+        text: 'Examen devuelto a análisis.',
+        customClass: { popup: 'swal-mover-derecha' }
+      });
       cargarValidados();
     } else {
       throw new Error(data.message);
     }
   } catch (err) {
     console.error('❌ Error al devolver examen:', err);
-    Swal.fire('Error', 'No se pudo devolver el examen', 'error');
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudo devolver el examen',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 

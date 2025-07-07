@@ -30,7 +30,12 @@ async function cargarOrdenes() {
     aplicarFiltroYPaginar();
   } catch (error) {
     console.error('Error al cargar órdenes:', error);
-    Swal.fire({ icon: 'error', text: 'No se pudieron cargar las órdenes.' });
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudieron cargar las órdenes.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 
@@ -129,11 +134,21 @@ async function verOrden(idOrden) {
 
       new bootstrap.Modal(document.getElementById('verEditarOrdenModal')).show();
     } else {
-      Swal.fire({ icon: 'error', text: 'Orden no encontrada.' });
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Orden no encontrada.',
+        customClass: { popup: 'swal-mover-derecha' }
+      });
     }
   } catch (err) {
     console.error('Error al cargar orden:', err);
-    Swal.fire({ icon: 'error', text: 'Error al consultar la orden.' });
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error al consultar la orden.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 // =================== Editar Orden ===================
@@ -179,26 +194,46 @@ async function editarOrden(idOrden) {
 
           const result = await res.json();
           if (result.success) {
-            Swal.fire({ icon: 'success', text: 'Orden actualizada correctamente.' });
+            Swal.fire({
+              icon: 'success',
+              title: '¡Éxito!',
+              text: 'Orden actualizada correctamente.',
+              customClass: { popup: 'swal-mover-derecha' }
+            });
             bootstrap.Modal.getInstance(document.getElementById('verEditarOrdenModal')).hide();
             cargarOrdenes();
           } else {
             throw new Error();
           }
         } catch (error) {
-          Swal.fire({ icon: 'error', text: 'No se pudo actualizar la orden.' });
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo actualizar la orden.',
+            customClass: { popup: 'swal-mover-derecha' }
+          });
         }
       };
 
       new bootstrap.Modal(document.getElementById('verEditarOrdenModal')).show();
 
     } else {
-      Swal.fire({ icon: 'error', text: 'Orden no encontrada.' });
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Orden no encontrada.',
+        customClass: { popup: 'swal-mover-derecha' }
+      });
     }
 
   } catch (err) {
     console.error('Error al cargar orden para editar:', err);
-    Swal.fire({ icon: 'error', text: 'Error al consultar la orden.' });
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error al consultar la orden.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 
@@ -229,9 +264,10 @@ document.getElementById('ordenForm').addEventListener('submit', async function (
         if (fila) fila.remove();
         Swal.fire({
           icon: 'success',
-          title: 'Orden enviada a análisis',
+          title: '¡Éxito!',
           text: 'La orden fue movida correctamente.',
-          confirmButtonText: 'Aceptar'
+          confirmButtonText: 'Aceptar',
+          customClass: { popup: 'swal-mover-derecha' }
         }).then(() => {
           // Recargar la vista de reportes automáticamente si existe la función SPA
           if (window.loadView) {
@@ -243,7 +279,8 @@ document.getElementById('ordenForm').addEventListener('submit', async function (
           icon: 'success',
           title: '¡Éxito!',
           text: 'Orden actualizada correctamente.',
-          confirmButtonText: 'Aceptar'
+          confirmButtonText: 'Aceptar',
+          customClass: { popup: 'swal-mover-derecha' }
         }).then(() => {
           cargarOrdenes(); // Solo recarga si no fue análisis
         });
@@ -253,7 +290,8 @@ document.getElementById('ordenForm').addEventListener('submit', async function (
         icon: 'error',
         title: 'Error',
         text: result.message || 'No se pudo actualizar la orden.',
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Aceptar',
+        customClass: { popup: 'swal-mover-derecha' }
       });
     }
   } catch (error) {
@@ -262,7 +300,8 @@ document.getElementById('ordenForm').addEventListener('submit', async function (
       icon: 'error',
       title: 'Error',
       text: 'Ocurrió un error inesperado.',
-      confirmButtonText: 'Aceptar'
+      confirmButtonText: 'Aceptar',
+      customClass: { popup: 'swal-mover-derecha' }
     });
   }
 });
@@ -290,12 +329,17 @@ document.getElementById('ordenForm').addEventListener('submit', async function (
     const paginacion = document.getElementById('paginacionOrdenes');
     if (!paginacion) return;
 
+    // Asegura centrado visual
+    paginacion.classList.add('text-center');
+    paginacion.style.display = 'block';
+    paginacion.style.justifyContent = '';
+
     if (totalPaginas <= 1) {
       paginacion.innerHTML = '';
       paginacion.style.display = 'none';
       return;
     } else {
-      paginacion.style.display = 'flex'; // o 'block' según tu diseño
+      paginacion.style.display = 'block';
     }
 
     paginacion.innerHTML = '';
@@ -352,7 +396,8 @@ async function eliminarOrden(id) {
     confirmButtonText: 'Sí, eliminar',
     cancelButtonText: 'Cancelar',
     confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6'
+    cancelButtonColor: '#3085d6',
+    customClass: { popup: 'swal-mover-derecha' }
   });
 
   if (confirmacion.isConfirmed) {

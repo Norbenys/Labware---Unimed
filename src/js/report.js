@@ -31,7 +31,12 @@ async function cargarReportes() {
     aplicarFiltroYPaginacion();
   } catch (err) {
     console.error('Error al cargar reportes:', err);
-    Swal.fire({ icon: 'error', text: 'No se pudieron cargar los reportes.' });
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudieron cargar los reportes.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 
@@ -105,6 +110,9 @@ function aplicarFiltroYPaginacion() {
   // Crear paginación solo si hay más de una página
   const paginacion = document.getElementById('paginacionReportes');
   if (!paginacion) return;
+  paginacion.classList.add('text-center');
+  paginacion.style.display = 'block';
+  paginacion.style.justifyContent = '';
   paginacion.innerHTML = '';
 
   if (totalPaginas > 1) {
@@ -208,7 +216,12 @@ async function analizarExamen(id_orden_examen) {
 
   } catch (err) {
     console.error('❌ Error al analizar examen:', err);
-    Swal.fire('Error', 'No se pudo cargar el examen', 'error');
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudo cargar el examen',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 
@@ -242,7 +255,8 @@ async function guardarResultados() {
       icon: 'warning',
       title: '¡Sin resultados!',
       text: 'Debes ingresar al menos un resultado para poder continuar.',
-      confirmButtonColor: '#1e1e1e'
+      confirmButtonColor: '#1e1e1e',
+      customClass: { popup: 'swal-mover-derecha' }
     });
   }
 
@@ -254,6 +268,7 @@ async function guardarResultados() {
       timer: 3000,
       showConfirmButton: false,
       timerProgressBar: true,
+      customClass: { popup: 'swal-mover-derecha' }
     });
   }
 
@@ -274,7 +289,8 @@ async function guardarResultados() {
         text: 'Los resultados fueron enviados a validación correctamente.',
         timer: 3000,
         showConfirmButton: false,
-        timerProgressBar: true
+        timerProgressBar: true,
+        customClass: { popup: 'swal-mover-derecha' }
       });
       cargarReportes();
     } else {
@@ -285,9 +301,10 @@ async function guardarResultados() {
     console.error('❌ Error al guardar resultados:', err);
     Swal.fire({
       icon: 'error',
-      title: 'Error inesperado',
+      title: 'Error',
       text: 'No se pudieron guardar los resultados. Intenta nuevamente.',
-      confirmButtonColor: '#d33'
+      confirmButtonColor: '#d33',
+      customClass: { popup: 'swal-mover-derecha' }
     });
   }
 }

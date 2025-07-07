@@ -13,9 +13,66 @@
       /* Mismo desplazamiento horizontal */
     }
 
+    /* Estilos para mensajes de error */
+    .invalid-feedback {
+      display: block !important;
+      font-size: 0.875em;
+      color: #d32f2f;
+      margin-top: 0.25rem;
+      font-weight: 500;
+    }
+
+    .form-control.is-invalid,
+    .form-select.is-invalid {
+      border-color: #d32f2f !important;
+      box-shadow: 0 0 0 0.2rem rgba(211, 47, 47, 0.25) !important;
+    }
+
+    /* Estilos para intl-tel-input */
+    .iti {
+      width: 100%;
+    }
+
+    .iti__flag-container {
+      border-radius: 0.375rem 0 0 0.375rem;
+    }
+
+    .iti__selected-flag {
+      background-color: #f8f9fa;
+      border: 1px solid #ced4da;
+      border-right: none;
+    }
+
+    .iti__country-list {
+      border-radius: 0.375rem;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    /* Ajuste para inputs con intl-tel-input */
+    .form-control.iti__tel-input {
+      border-left: none;
+      border-radius: 0 0.375rem 0.375rem 0;
+    }
+
+    /* Asegurar que el contenedor del teléfono tenga el ancho correcto */
+    .iti {
+      width: 100% !important;
+      display: block !important;
+    }
+
+    /* Estilos para el campo de teléfono en formularios */
+    .form-control[type="tel"] {
+      padding-left: 90px;
+    }
+
+    /* Ajuste para el modal de edición */
+    #viewEditUserModal .iti {
+      width: 100% !important;
+    }
+
     /* Centrar el modal y evitar scroll para ambos */
     .modal-dialog {
-      max-width: 800px;
+      max-width: 700px;
       margin: 1.75rem auto;
     }
 
@@ -67,7 +124,7 @@
     }
 
     #buscadorUsuarios {
-      max-width: 250px;
+      max-width: 300px;
       /* Puedes cambiar a 250px, 400px, etc. */
     }
     
@@ -112,6 +169,24 @@
   content: none !important;
 }
 
+/* Overlay para oscurecer todo, incluyendo la barra lateral */
+#custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 30, 30, 0.55);
+  z-index: 2000;
+  display: none;
+  transition: opacity 0.2s;
+}
+@media (max-width: 991px) {
+  #custom-modal-overlay {
+    left: 0;
+    width: 100vw;
+  }
+}
 
   </style>
 
@@ -169,60 +244,91 @@
 
     <!-- Ventana para agregar usuarios -->
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content border-0 shadow">
-          <div class="modal-header bg-gradient-dark">
-            <h5 class="modal-title text-white" id="addUserModalLabel"></h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-              aria-label="Cerrar"></button>
+      <div class="modal-dialog modal-dialog-centered modal-xl" style="max-width: 930px;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 10px; background: #fff;">
+          <div class="modal-header" style="background: linear-gradient(90deg, #232526 0%, #414345 100%); border-top-left-radius: 10px; border-top-right-radius: 10px; min-height: 50px;">
+            <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Cerrar" style="z-index: 10;"></button>
           </div>
-          <div class="modal-body px-4">
+          <div class="modal-body px-5 py-4">
             <form id="addUserForm">
-              <div class="row g-3">
-                <div class="col-12 col-md-6">
+              <div class="row g-4">
+                <div class="col-12 col-md-3">
                   <label for="cedula" class="form-label">Cédula</label>
-                  <input type="text" class="form-control" id="cedula" required>
+                  <input type="text" class="form-control form-control-lg" id="cedula" required 
+                         pattern="[0-9]{5,20}" 
+                         title="Solo números, mínimo 5 dígitos"
+                         oninput="validarCedula(this)">
+                  <div class="invalid-feedback" id="cedula-error"></div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
-                  <input type="date" class="form-control" id="fecha_nacimiento" required>
+                  <input type="date" class="form-control form-control-lg" id="fecha_nacimiento" required
+                         onchange="validarFecha(this)">
+                  <div class="invalid-feedback" id="fecha-error"></div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="nombres" class="form-label">Nombres</label>
-                  <input type="text" class="form-control" id="nombres" required>
+                  <input type="text" class="form-control form-control-lg" id="nombres" required
+                         pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}"
+                         title="Solo letras y espacios"
+                         oninput="validarNombres(this)">
+                  <div class="invalid-feedback" id="nombres-error"></div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="apellidos" class="form-label">Apellidos</label>
-                  <input type="text" class="form-control" id="apellidos" required>
+                  <input type="text" class="form-control form-control-lg" id="apellidos" required
+                         pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}"
+                         title="Solo letras y espacios"
+                         oninput="validarNombres(this)">
+                  <div class="invalid-feedback" id="apellidos-error"></div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="telefono" class="form-label">Teléfono</label>
-                  <input type="text" class="form-control" id="telefono" required>
+                  <input type="tel" class="form-control form-control-lg" id="telefono" required
+                         oninput="validarTelefono(this)">
+                  <div class="invalid-feedback" id="telefono-error"></div>
                 </div>
-                <div class="col-12 col-md-6">
-                  <label for="email" class="form-label">Correo electrónico</label>
-                  <input type="email" class="form-control" id="email" required>
+                <div class="col-12 col-md-3">
+                  <label for="correo" class="form-label">Correo electrónico</label>
+                  <input type="email" class="form-control form-control-lg" id="correo" required
+                         oninput="validarCorreo(this)">
+                  <div class="invalid-feedback" id="correo-error"></div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="titulo" class="form-label">Título</label>
-                  <select class="form-select" id="titulo" required></select>
+                  <select class="form-select form-select-lg" id="titulo" required>
+                    <option value="Médico">Médico</option>
+                    <option value="Bioanalista">Bioanalista</option>
+                    <option value="Administrador">Administrador</option>
+                    <option value="Otro">Otro</option>
+                  </select>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="rol" class="form-label">Rol</label>
-                  <select class="form-select" id="rol" required></select>
+                  <select class="form-select form-select-lg" id="rol" required>
+                    <option value="Administrador">Administrador</option>
+                    <option value="Médico">Médico</option>
+                    <option value="Bioanalista">Bioanalista</option>
+                    <option value="Recepcionista">Recepcionista</option>
+                  </select>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="usuario" class="form-label">Usuario</label>
-                  <input type="text" class="form-control" id="usuario" required>
+                  <input type="text" class="form-control form-control-lg" id="usuario" required
+                         oninput="validarUsuario(this)">
+                  <div class="invalid-feedback" id="usuario-error"></div>
                 </div>
-                <div class="col-12 col-md-6">
-                  <label for="password" class="form-label">Contraseña</label>
-                  <input type="password" class="form-control" id="password" required>
+                <div class="col-12 col-md-3">
+                  <label for="contrasena" class="form-label">Contraseña</label>
+                  <input type="password" class="form-control form-control-lg" id="contrasena" required
+                         oninput="validarContrasena(this)">
+                  <div class="invalid-feedback" id="contrasena-error"></div>
                 </div>
               </div>
-              <div class="text-end mt-4">
-                <button type="submit" class="btn btn-dark">
-                  <i class="material-symbols-rounded align-middle">check</i> Guardar
+              <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="button" class="btn btn-outline-secondary btn-lg px-4" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-dark btn-lg d-flex align-items-center gap-2 px-4">
+                  <i class="material-symbols-rounded"></i> Guardar
                 </button>
               </div>
             </form>
@@ -234,59 +340,67 @@
 
     <!-- Ventana para ver/editar usuarios -->
     <div class="modal fade" id="viewEditUserModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content border-0 shadow">
-          <div class="modal-header bg-gradient-dark">
-            <h5 class="modal-title text-white" id="viewEditTitle">Información</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      <div class="modal-dialog modal-dialog-centered modal-xl" style="max-width: 930px;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 10px; background: #fff;">
+          <div class="modal-header" style="background: linear-gradient(90deg, #232526 0%, #414345 100%); border-top-left-radius: 10px; border-top-right-radius: 10px; min-height: 50px;">
+            <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Cerrar" style="z-index: 10;"></button>
+            <h5 class="modal-title text-white visually-hidden" id="viewEditTitle">Información</h5>
           </div>
-          <div class="modal-body px-4">
+          <div class="modal-body px-5 py-4">
             <form id="editUserForm">
               <input type="hidden" id="edit_id_usuario">
-              <div class="row g-3">
-                <div class="col-12 col-md-6">
+              <div class="row g-4">
+                <div class="col-12 col-md-3">
                   <label for="edit_cedula" class="form-label">Cédula</label>
-                  <input type="text" class="form-control" id="edit_cedula">
+                  <input type="text" class="form-control form-control-lg" id="edit_cedula" oninput="validarCedula(this)">
+                  <div class="invalid-feedback" id="edit_cedula-error"></div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="edit_fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
-                  <input type="date" class="form-control" id="edit_fecha_nacimiento">
+                  <input type="date" class="form-control form-control-lg" id="edit_fecha_nacimiento" onchange="validarFecha(this)">
+                  <div class="invalid-feedback" id="edit_fecha_nacimiento-error"></div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="edit_nombres" class="form-label">Nombres</label>
-                  <input type="text" class="form-control" id="edit_nombres">
+                  <input type="text" class="form-control form-control-lg" id="edit_nombres" oninput="validarNombres(this)">
+                  <div class="invalid-feedback" id="edit_nombres-error"></div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="edit_apellidos" class="form-label">Apellidos</label>
-                  <input type="text" class="form-control" id="edit_apellidos">
+                  <input type="text" class="form-control form-control-lg" id="edit_apellidos" oninput="validarNombres(this)">
+                  <div class="invalid-feedback" id="edit_apellidos-error"></div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="edit_telefono" class="form-label">Teléfono</label>
-                  <input type="text" class="form-control" id="edit_telefono">
+                  <input type="tel" class="form-control form-control-lg" id="edit_telefono" oninput="validarTelefono(this)">
+                  <div class="invalid-feedback" id="edit_telefono-error"></div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="edit_email" class="form-label">Correo electrónico</label>
-                  <input type="email" class="form-control" id="edit_email">
+                  <input type="email" class="form-control form-control-lg" id="edit_email" oninput="validarCorreo(this)">
+                  <div class="invalid-feedback" id="edit_email-error"></div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="edit_titulo" class="form-label">Título</label>
-                  <select class="form-select" id="edit_titulo"></select>
+                  <select class="form-select form-select-lg" id="edit_titulo"></select>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="edit_rol" class="form-label">Rol</label>
-                  <select class="form-select" id="edit_rol"></select>
+                  <select class="form-select form-select-lg" id="edit_rol"></select>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="edit_usuario" class="form-label">Usuario</label>
-                  <input type="text" class="form-control" id="edit_usuario">
+                  <input type="text" class="form-control form-control-lg" id="edit_usuario" oninput="validarUsuario(this)">
+                  <div class="invalid-feedback" id="edit_usuario-error"></div>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="edit_password" class="form-label">Contraseña</label>
-                  <input type="text" class="form-control" id="edit_password">
+                  <input type="text" class="form-control form-control-lg" id="edit_password" oninput="validarContrasena(this)">
+                  <div class="invalid-feedback" id="edit_password-error"></div>
                 </div>
               </div>
               <div class="text-end mt-4" id="btnGuardarCambiosContainer" style="display: none;">
-                <button type="submit" class="btn btn-dark">
+                <button type="submit" class="btn btn-dark btn-lg d-flex align-items-center gap-2 px-4">
                   <i class="material-symbols-rounded align-middle">save</i> Guardar cambios
                 </button>
               </div>
@@ -301,3 +415,485 @@
 
   <script src="../js/rol.js"></script>
   <script src="../js/user.js"></script>
+
+<div id="custom-modal-overlay"></div>
+
+<script>
+  // Mostrar/ocultar overlay al abrir/cerrar modales
+  document.addEventListener('DOMContentLoaded', function() {
+    const overlay = document.getElementById('custom-modal-overlay');
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+      modal.addEventListener('show.bs.modal', () => {
+        overlay.style.display = 'block';
+      });
+      modal.addEventListener('hidden.bs.modal', () => {
+        overlay.style.display = 'none';
+      });
+    });
+  });
+</script>
+
+<!-- Agrega intl-tel-input CSS en el <head> -->
+<link rel="stylesheet" href="../assets/css/intlTelInput.min.css" />
+<!-- Al final del body, antes de </body> -->
+<script src="../assets/js/intlTelInput.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Inicializar intl-tel-input para ambos formularios
+  const telInput = document.getElementById('telefono');
+  const editTelInput = document.getElementById('edit_telefono');
+  let iti, editIti;
+  
+  if (telInput) {
+    iti = window.intlTelInput(telInput, {
+      initialCountry: 'auto',
+      nationalMode: false,
+      preferredCountries: ['ve', 'co', 'us', 'es'],
+      utilsScript: '../assets/js/utils.js',
+    });
+  }
+  
+  if (editTelInput) {
+    console.log('🔧 Inicializando intl-tel-input para campo de editar...');
+    editIti = window.intlTelInput(editTelInput, {
+      initialCountry: 'auto',
+      nationalMode: false,
+      preferredCountries: ['ve', 'co', 'us', 'es'],
+      utilsScript: '../assets/js/utils.js',
+    });
+    console.log('✅ intl-tel-input inicializado para editar:', editIti);
+  }
+
+  // Reinicializar intl-tel-input cuando se abre el modal de edición
+  document.addEventListener('show.bs.modal', function(event) {
+    if (event.target.id === 'viewEditUserModal') {
+      const editTelInput = document.getElementById('edit_telefono');
+      if (editTelInput && !editIti) {
+        editIti = window.intlTelInput(editTelInput, {
+          initialCountry: 'auto',
+          nationalMode: false,
+          preferredCountries: ['ve', 'co', 'us', 'es'],
+          utilsScript: '../assets/js/utils.js',
+        });
+      }
+    }
+  });
+
+  // Asegurar que intl-tel-input se inicialice correctamente
+  setTimeout(() => {
+    if (telInput && !iti) {
+      console.log('🔧 Inicializando intl-tel-input para campo de agregar...');
+      iti = window.intlTelInput(telInput, {
+        initialCountry: 'auto',
+        nationalMode: false,
+        preferredCountries: ['ve', 'co', 'us', 'es'],
+        utilsScript: '../assets/js/utils.js',
+      });
+      console.log('✅ intl-tel-input inicializado para agregar:', iti);
+    }
+  }, 100);
+
+  // Funciones de validación
+  function setError(input, msg) {
+    let error = input.parentElement.querySelector('.invalid-feedback');
+    if (!error) {
+      error = document.createElement('div');
+      error.className = 'invalid-feedback';
+      error.style.display = 'block';
+      error.style.fontSize = '0.9em';
+      error.style.color = '#d32f2f';
+      error.style.marginTop = '0.25rem';
+      input.parentElement.appendChild(error);
+    }
+    error.textContent = msg;
+    input.classList.add('is-invalid');
+  }
+  
+  function clearError(input) {
+    let error = input.parentElement.querySelector('.invalid-feedback');
+    if (error) error.textContent = '';
+    input.classList.remove('is-invalid');
+  }
+
+  // Función para validar si un formulario es válido
+  function isFormValid(formId) {
+    const form = document.getElementById(formId);
+    const inputs = form.querySelectorAll('input[required], select[required]');
+    let isValid = true;
+    
+    inputs.forEach(input => {
+      if (input.classList.contains('is-invalid')) {
+        isValid = false;
+      }
+    });
+    
+    return isValid;
+  }
+
+  // Validaciones para formulario de agregar usuario
+  const cedula = document.getElementById('cedula');
+  const nombres = document.getElementById('nombres');
+  const apellidos = document.getElementById('apellidos');
+  const correo = document.getElementById('correo');
+  const fecha = document.getElementById('fecha_nacimiento');
+  const usuario = document.getElementById('usuario');
+  const contrasena = document.getElementById('contrasena');
+
+  if (cedula) {
+    cedula.addEventListener('input', function() {
+      if (!/^\d{5,20}$/.test(cedula.value)) {
+        setError(cedula, 'Solo números (mínimo 5 dígitos)');
+      } else {
+        clearError(cedula);
+      }
+    });
+  }
+  
+  if (nombres) {
+    nombres.addEventListener('input', function() {
+      if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/.test(nombres.value)) {
+        setError(nombres, 'Solo letras y espacios');
+      } else {
+        clearError(nombres);
+      }
+    });
+  }
+  
+  if (apellidos) {
+    apellidos.addEventListener('input', function() {
+      if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/.test(apellidos.value)) {
+        setError(apellidos, 'Solo letras y espacios');
+      } else {
+        clearError(apellidos);
+      }
+    });
+  }
+  
+  if (correo) {
+    correo.addEventListener('input', function() {
+      if (!/^\S+@\S+\.\S+$/.test(correo.value)) {
+        setError(correo, 'Correo electrónico inválido');
+      } else {
+        clearError(correo);
+      }
+    });
+  }
+  
+  if (fecha) {
+    fecha.addEventListener('input', function() {
+      const hoy = new Date();
+      const fechaNac = new Date(fecha.value);
+      const edad = hoy.getFullYear() - fechaNac.getFullYear();
+      const cumpleEsteAño = hoy.getMonth() > fechaNac.getMonth() || (hoy.getMonth() === fechaNac.getMonth() && hoy.getDate() >= fechaNac.getDate());
+      const edadReal = cumpleEsteAño ? edad : edad - 1;
+      
+      if (!fecha.value) {
+        setError(fecha, 'Campo requerido');
+      } else if (fechaNac > hoy) {
+        setError(fecha, 'No puede ser una fecha futura');
+      } else if (edadReal < 18) {
+        setError(fecha, 'Debe ser mayor de 18 años');
+      } else {
+        clearError(fecha);
+      }
+    });
+  }
+  
+  if (telInput && iti) {
+    telInput.addEventListener('input', function() {
+      if (!iti.isValidNumber()) {
+        setError(telInput, 'Teléfono inválido');
+      } else {
+        clearError(telInput);
+      }
+    });
+  }
+  
+  if (usuario) {
+    usuario.addEventListener('input', function() {
+      if (usuario.value.length < 3) {
+        setError(usuario, 'Mínimo 3 caracteres');
+      } else {
+        clearError(usuario);
+      }
+    });
+  }
+  
+  if (contrasena) {
+    contrasena.addEventListener('input', function() {
+      if (contrasena.value.length < 6) {
+        setError(contrasena, 'Mínimo 6 caracteres');
+      } else {
+        clearError(contrasena);
+      }
+    });
+  }
+
+  // Validaciones para formulario de editar usuario
+  const editCedula = document.getElementById('edit_cedula');
+  const editNombres = document.getElementById('edit_nombres');
+  const editApellidos = document.getElementById('edit_apellidos');
+  const editCorreo = document.getElementById('edit_email');
+  const editFecha = document.getElementById('edit_fecha_nacimiento');
+  const editUsuario = document.getElementById('edit_usuario');
+  const editPassword = document.getElementById('edit_password');
+
+  if (editCedula) {
+    editCedula.addEventListener('input', function() {
+      if (!/^\d{5,20}$/.test(editCedula.value)) {
+        setError(editCedula, 'Solo números (mínimo 5 dígitos)');
+      } else {
+        clearError(editCedula);
+      }
+    });
+  }
+  
+  if (editNombres) {
+    editNombres.addEventListener('input', function() {
+      if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/.test(editNombres.value)) {
+        setError(editNombres, 'Solo letras y espacios');
+      } else {
+        clearError(editNombres);
+      }
+    });
+  }
+  
+  if (editApellidos) {
+    editApellidos.addEventListener('input', function() {
+      if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/.test(editApellidos.value)) {
+        setError(editApellidos, 'Solo letras y espacios');
+      } else {
+        clearError(editApellidos);
+      }
+    });
+  }
+  
+  if (editCorreo) {
+    editCorreo.addEventListener('input', function() {
+      if (!/^\S+@\S+\.\S+$/.test(editCorreo.value)) {
+        setError(editCorreo, 'Correo electrónico inválido');
+      } else {
+        clearError(editCorreo);
+      }
+    });
+  }
+  
+  if (editFecha) {
+    editFecha.addEventListener('input', function() {
+      const hoy = new Date();
+      const fechaNac = new Date(editFecha.value);
+      const edad = hoy.getFullYear() - fechaNac.getFullYear();
+      const cumpleEsteAño = hoy.getMonth() > fechaNac.getMonth() || (hoy.getMonth() === fechaNac.getMonth() && hoy.getDate() >= fechaNac.getDate());
+      const edadReal = cumpleEsteAño ? edad : edad - 1;
+      
+      if (!editFecha.value) {
+        setError(editFecha, 'Campo requerido');
+      } else if (fechaNac > hoy) {
+        setError(editFecha, 'No puede ser una fecha futura');
+      } else if (edadReal < 18) {
+        setError(editFecha, 'Debe ser mayor de 18 años');
+      } else {
+        clearError(editFecha);
+      }
+    });
+  }
+  
+  if (editTelInput && editIti) {
+    editTelInput.addEventListener('input', function() {
+      if (!editIti.isValidNumber()) {
+        setError(editTelInput, 'Teléfono inválido');
+      } else {
+        clearError(editTelInput);
+      }
+    });
+  }
+  
+  if (editUsuario) {
+    editUsuario.addEventListener('input', function() {
+      if (editUsuario.value.length < 3) {
+        setError(editUsuario, 'Mínimo 3 caracteres');
+      } else {
+        clearError(editUsuario);
+      }
+    });
+  }
+  
+  if (editPassword) {
+    editPassword.addEventListener('input', function() {
+      if (editPassword.value.length < 6) {
+        setError(editPassword, 'Mínimo 6 caracteres');
+      } else {
+        clearError(editPassword);
+      }
+    });
+  }
+
+  // Prevenir envío de formularios si hay errores
+  const addUserForm = document.getElementById('addUserForm');
+  const editUserForm = document.getElementById('editUserForm');
+  
+  if (addUserForm) {
+    addUserForm.addEventListener('submit', function(e) {
+      if (!isFormValid('addUserForm')) {
+        e.preventDefault();
+        Swal.fire({
+          icon: 'error',
+          title: 'Error de validación',
+          text: 'Por favor, corrige los errores en el formulario antes de continuar.',
+          confirmButtonText: 'Entendido'
+        });
+      }
+    });
+  }
+  
+  if (editUserForm) {
+    editUserForm.addEventListener('submit', function(e) {
+      if (!isFormValid('editUserForm')) {
+        e.preventDefault();
+        Swal.fire({
+          icon: 'error',
+          title: 'Error de validación',
+          text: 'Por favor, corrige los errores en el formulario antes de continuar.',
+          confirmButtonText: 'Entendido'
+        });
+      }
+    });
+  }
+
+  // Limpiar errores cuando se cierra un modal
+  document.addEventListener('hidden.bs.modal', function(event) {
+    const modal = event.target;
+    const inputs = modal.querySelectorAll('.form-control, .form-select');
+    inputs.forEach(input => {
+      input.classList.remove('is-invalid');
+      const error = input.parentElement.querySelector('.invalid-feedback');
+      if (error) {
+        error.textContent = '';
+      }
+    });
+  });
+
+  // ===================== FUNCIONES DE VALIDACIÓN SENCILLAS =====================
+  
+  // Validar cédula
+  function validarCedula(input) {
+    const valor = input.value;
+    const errorDiv = document.getElementById(input.id + '-error');
+    
+    if (valor.length < 5) {
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Mínimo 5 dígitos';
+    } else if (!/^\d+$/.test(valor)) {
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Solo números';
+    } else {
+      input.classList.remove('is-invalid');
+      errorDiv.textContent = '';
+    }
+  }
+
+  // Validar nombres y apellidos
+  function validarNombres(input) {
+    const valor = input.value;
+    const errorDiv = document.getElementById(input.id + '-error');
+    
+    if (valor.length < 2) {
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Mínimo 2 caracteres';
+    } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/.test(valor)) {
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Solo letras y espacios';
+    } else {
+      input.classList.remove('is-invalid');
+      errorDiv.textContent = '';
+    }
+  }
+
+  // Validar fecha de nacimiento
+  function validarFecha(input) {
+    const valor = input.value;
+    const errorDiv = document.getElementById(input.id + '-error');
+    
+    if (!valor) {
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Campo requerido';
+      return;
+    }
+    
+    const fechaNac = new Date(valor);
+    const hoy = new Date();
+    const edad = hoy.getFullYear() - fechaNac.getFullYear();
+    
+    if (fechaNac > hoy) {
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'No puede ser fecha futura';
+    } else if (edad < 18) {
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Debe ser mayor de 18 años';
+    } else {
+      input.classList.remove('is-invalid');
+      errorDiv.textContent = '';
+    }
+  }
+
+  // Validar teléfono
+  function validarTelefono(input) {
+    const valor = input.value;
+    const errorDiv = document.getElementById(input.id + '-error');
+    
+    if (valor.length < 7) {
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Mínimo 7 dígitos';
+    } else if (!/^\d+$/.test(valor)) {
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Solo números';
+    } else {
+      input.classList.remove('is-invalid');
+      errorDiv.textContent = '';
+    }
+  }
+
+  // Validar correo
+  function validarCorreo(input) {
+    const valor = input.value;
+    const errorDiv = document.getElementById(input.id + '-error');
+    
+    if (!valor.includes('@') || !valor.includes('.')) {
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Formato de correo inválido';
+    } else {
+      input.classList.remove('is-invalid');
+      errorDiv.textContent = '';
+    }
+  }
+
+  // Validar usuario
+  function validarUsuario(input) {
+    const valor = input.value;
+    const errorDiv = document.getElementById(input.id + '-error');
+    
+    if (valor.length < 3) {
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Mínimo 3 caracteres';
+    } else {
+      input.classList.remove('is-invalid');
+      errorDiv.textContent = '';
+    }
+  }
+
+  // Validar contraseña
+  function validarContrasena(input) {
+    const valor = input.value;
+    const errorDiv = document.getElementById(input.id + '-error');
+    
+    if (valor.length < 6) {
+      input.classList.add('is-invalid');
+      errorDiv.textContent = 'Mínimo 6 caracteres';
+    } else {
+      input.classList.remove('is-invalid');
+      errorDiv.textContent = '';
+    }
+  }
+});
+</script>

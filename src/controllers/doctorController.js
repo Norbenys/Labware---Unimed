@@ -154,4 +154,26 @@ router.delete('/delete/:id', async (req, res) => {
   }
 });
 
+// ===================== BUSCAR DOCTOR POR NOMBRE O APELLIDO =====================
+router.post('/buscarNombre', async (req, res) => {
+  const { nombre } = req.body;
+  if (!nombre || nombre.length < 3) {
+    return res.json({ success: false, message: 'Debes escribir al menos 3 letras.' });
+  }
+  try {
+    const [results] = await db.query(`
+      SELECT 
+        id, nombres AS nombre, apellidos AS apellido, 
+        (SELECT nombre FROM especialidad WHERE id = d.id_especialidad) AS especialidad
+      FROM doctores d
+      WHERE LOWER(nombres) LIKE ? OR LOWER(apellidos) LIKE ?
+      LIMIT 10
+    `, [`%${nombre.toLowerCase()}%`, `%${nombre.toLowerCase()}%`]);
+    res.json({ success: true, doctores: results });
+  } catch (err) {
+    console.error('Error al buscar doctor por nombre:', err);
+    res.status(500).json({ success: false, message: 'Error al buscar doctor.' });
+  }
+});
+
 module.exports = router;

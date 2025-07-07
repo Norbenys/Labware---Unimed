@@ -2,8 +2,19 @@
   <style>
 
      #buscadorArchivos {
-      max-width: 250px;
+      max-width: 300px;
       /* Puedes cambiar a 250px, 400px, etc. */
+      border-color: #ced4da !important;
+      box-shadow: none !important;
+    }
+    #buscadorArchivos:focus {
+      border-color: #ced4da !important;
+      box-shadow: none !important;
+    }
+    .input-group-outline:has(#buscadorArchivos) .form-control,
+    .input-group-outline:has(#buscadorArchivos) .form-control:focus {
+      border-color: #ced4da !important;
+      box-shadow: none !important;
     }
      #modalVerResultadosArchivo .modal-dialog {
   max-width: 800px;          /* Ancho adecuado para mostrar resultados */

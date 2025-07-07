@@ -1,6 +1,6 @@
 (() => {
 let paginaActualPacientes = 1;
-const registrosPorPaginaP = 5;
+const registrosPorPaginaP = 6;
 
 // 📌 Función para calcular la edad desde la fecha de nacimiento (solo para mostrar)
 function calcularEdad() {
@@ -77,7 +77,12 @@ async function loadPatients() {
 
     aplicarFiltroYPaginar(); // ✅ Aplicar filtro y paginación al cargar
   } else {
-    alert('Error al cargar los pacientes');
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error al cargar los pacientes',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 
@@ -97,7 +102,12 @@ async function loadSexos() {
       sexoSelect.appendChild(option);
     });
   } else {
-    alert('Error al cargar los sexos');
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error al cargar los sexos',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 
@@ -112,12 +122,13 @@ document.getElementById('addPatientForm').addEventListener('submit', async funct
   event.preventDefault();
 
   const edadCalculada = calcularEdad();
-  if (!edadCalculada || edadCalculada < 0) {
+  if (edadCalculada === null || edadCalculada < 0) {
     Swal.fire({
       icon: 'error',
       title: 'Error',
       text: 'No se ha podido calcular la edad.',
-      confirmButtonText: 'Aceptar'
+      confirmButtonText: 'Aceptar',
+      customClass: { popup: 'swal-mover-derecha' }
     });
     return;
   }
@@ -148,7 +159,8 @@ document.getElementById('addPatientForm').addEventListener('submit', async funct
         icon: 'success',
         title: '¡Éxito!',
         text: 'Paciente agregado exitosamente.',
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Aceptar',
+        customClass: { popup: 'swal-mover-derecha' }
       }).then(() => {
         const modal = bootstrap.Modal.getInstance(document.getElementById('addPatientModal'));
         modal.hide();
@@ -160,7 +172,8 @@ document.getElementById('addPatientForm').addEventListener('submit', async funct
         icon: 'error',
         title: 'Error',
         text: data.message || 'No se ha podido agregar el paciente.',
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Aceptar',
+        customClass: { popup: 'swal-mover-derecha' }
       });
     }
   } catch (error) {
@@ -169,7 +182,8 @@ document.getElementById('addPatientForm').addEventListener('submit', async funct
       icon: 'error',
       title: 'Error',
       text: 'Ocurrió un error inesperado.',
-      confirmButtonText: 'Aceptar'
+      confirmButtonText: 'Aceptar',
+      customClass: { popup: 'swal-mover-derecha' }
     });
   }
 });
@@ -304,11 +318,21 @@ document.getElementById('editPatientForm').addEventListener('submit', async func
   const result = await response.json();
 
   if (result.success) {
-    await Swal.fire('¡Éxito!', 'Paciente actualizado correctamente.', 'success');
+    Swal.fire({
+      icon: 'success',
+      title: '¡Éxito!',
+      text: 'Paciente actualizado correctamente.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
     bootstrap.Modal.getInstance(document.getElementById('viewEditPatientModal')).hide();
     loadPatients(); // Recargar la tabla
   } else {
-    Swal.fire('¡Error!', result.message || 'No se pudo actualizar el paciente.', 'error');
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: result.message || 'No se pudo actualizar el paciente.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 });
 
@@ -326,7 +350,8 @@ document.addEventListener('click', async (e) => {
       confirmButtonText: 'Eliminar',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6'
+      cancelButtonColor: '#3085d6',
+      customClass: { popup: 'swal-mover-derecha' }
     });
 
     if (confirmacion.isConfirmed) {
@@ -341,14 +366,29 @@ document.addEventListener('click', async (e) => {
           const fila = document.querySelector(`tr[data-patientid="${patientId}"]`);
           if (fila) fila.remove();
 
-          await Swal.fire('Eliminado', result.message, 'success');
+          Swal.fire({
+            icon: 'success',
+            title: 'Eliminado',
+            text: result.message,
+            customClass: { popup: 'swal-mover-derecha' }
+          });
           loadPatients(); // Recargar tabla completa si prefieres
         } else {
-          Swal.fire('Error', result.message || 'No se pudo eliminar el paciente.', 'error');
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: result.message || 'No se pudo eliminar el paciente.',
+            customClass: { popup: 'swal-mover-derecha' }
+          });
         }
       } catch (err) {
         console.error(err);
-        Swal.fire('Error', 'Hubo un problema al intentar eliminar.', 'error');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Hubo un problema al intentar eliminar.',
+          customClass: { popup: 'swal-mover-derecha' }
+        });
       }
     }
   }

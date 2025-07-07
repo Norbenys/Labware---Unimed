@@ -118,6 +118,16 @@
       <td colspan="2"></td>
     `;
     tabla.appendChild(filaTotal);
+
+    // Mostrar u ocultar el contenedor de la tabla según si hay exámenes seleccionados
+    const contenedorTabla = document.getElementById('contenedorTablaCotizador');
+    if (contenedorTabla) {
+      if (examenesSeleccionadosCotizador.length > 0) {
+        contenedorTabla.style.display = 'block';
+      } else {
+        contenedorTabla.style.display = 'none';
+      }
+    }
   }
 
   // ===================== 🧹 Limpiar cotización =====================

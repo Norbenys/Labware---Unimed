@@ -2,8 +2,19 @@
   <style>
 
  #buscadorReportes {
-      max-width: 250px;
+      max-width: 300px;
       /* Puedes cambiar a 250px, 400px, etc. */
+      border-color: #ced4da !important;
+      box-shadow: none !important;
+    }
+    #buscadorReportes:focus {
+      border-color: #ced4da !important;
+      box-shadow: none !important;
+    }
+    .input-group-outline:has(#buscadorReportes) .form-control,
+    .input-group-outline:has(#buscadorReportes) .form-control:focus {
+      border-color: #ced4da !important;
+      box-shadow: none !important;
     }
 /* ========== Estilo específico para el modal de Insertar Resultados ========== */
 #modalReportar .modal-dialog {

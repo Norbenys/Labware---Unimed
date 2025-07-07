@@ -100,7 +100,12 @@ document.addEventListener("DOMContentLoaded", () => {
 document.getElementById("btnBuscarPaciente").addEventListener("click", async () => {
   const cedula = document.getElementById("cedula").value.trim();
   if (cedula.length < 6) {
-    return Swal.fire({ icon: 'warning', text: 'Ingresa una cédula válida.' });
+    return Swal.fire({
+      icon: 'warning',
+      title: '¡Advertencia!',
+      text: 'Ingresa una cédula válida.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 
   try {
@@ -122,7 +127,8 @@ document.getElementById("btnBuscarPaciente").addEventListener("click", async () 
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Sí',
-        cancelButtonText: 'No'
+        cancelButtonText: 'No',
+        customClass: { popup: 'swal-mover-derecha' }
       });
 
       if (isConfirmed) {
@@ -149,11 +155,21 @@ document.getElementById("btnBuscarPaciente").addEventListener("click", async () 
         }
       }
     } else {
-      Swal.fire({ icon: 'info', text: data.message || 'Paciente no encontrado.' });
+      Swal.fire({
+        icon: 'info',
+        title: 'Información',
+        text: data.message || 'Paciente no encontrado.',
+        customClass: { popup: 'swal-mover-derecha' }
+      });
     }
   } catch (error) {
     console.error("❌ Error:", error);
-    Swal.fire({ icon: 'error', text: 'Error al buscar paciente.' });
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error al buscar paciente.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 });
 
@@ -168,7 +184,12 @@ document.getElementById("btnBuscarPorFecha").addEventListener("click", async () 
   }
 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
-    return Swal.fire({ icon: 'warning', text: 'Fecha inválida. Usa el formato correcto.' });
+    return Swal.fire({
+      icon: 'warning',
+      title: '¡Advertencia!',
+      text: 'Fecha inválida. Usa el formato correcto.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 
   try {
@@ -190,7 +211,8 @@ document.getElementById("btnBuscarPorFecha").addEventListener("click", async () 
           icon: 'question',
           showCancelButton: true,
           confirmButtonText: 'Sí',
-          cancelButtonText: 'No'
+          cancelButtonText: 'No',
+          customClass: { popup: 'swal-mover-derecha' }
         });
         if (isConfirmed) llenarFormularioPaciente(paciente);
       } else {
@@ -206,7 +228,8 @@ document.getElementById("btnBuscarPorFecha").addEventListener("click", async () 
             return acc;
           }, {}),
           inputPlaceholder: 'Selecciona un paciente',
-          showCancelButton: true
+          showCancelButton: true,
+          customClass: { popup: 'swal-mover-derecha' }
         });
 
         if (seleccionado !== undefined && data.pacientes[seleccionado]) {
@@ -217,17 +240,28 @@ document.getElementById("btnBuscarPorFecha").addEventListener("click", async () 
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Sí',
-            cancelButtonText: 'No'
+            cancelButtonText: 'No',
+            customClass: { popup: 'swal-mover-derecha' }
           });
           if (isConfirmed) llenarFormularioPaciente(paciente);
         }
       }
     } else {
-      Swal.fire({ icon: 'info', text: 'No se encontraron pacientes con esa fecha.' });
+      Swal.fire({
+        icon: 'info',
+        title: 'Información',
+        text: 'No se encontraron pacientes con esa fecha.',
+        customClass: { popup: 'swal-mover-derecha' }
+      });
     }
   } catch (error) {
     console.error("❌ Error al buscar por fecha:", error);
-    Swal.fire({ icon: 'error', text: 'Error al buscar paciente por fecha.' });
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error al buscar paciente por fecha.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 });
 
@@ -386,6 +420,15 @@ function renderizarTablaSeleccionados() {
 `;
   tbody.appendChild(filaTotal);
 
+  // Mostrar u ocultar el contenedor de la tabla según si hay exámenes seleccionados
+  const contenedorTabla = document.getElementById('contenedorTablaExamenes');
+  if (contenedorTabla) {
+    if (examenesSeleccionados.length > 0) {
+      contenedorTabla.style.display = 'block';
+    } else {
+      contenedorTabla.style.display = 'none';
+    }
+  }
 }
 
 // ===================== CALCULAR EDAD =====================
@@ -408,7 +451,12 @@ function calcularEdad(fechaNacimiento) {
 
 document.getElementById("btnGuardarOrden").addEventListener("click", async () => {
   if (examenesSeleccionados.length === 0) {
-    return Swal.fire({ icon: 'warning', text: 'Selecciona al menos un examen para crear la orden.' });
+    return Swal.fire({
+      icon: 'warning',
+      title: '¡Advertencia!',
+      text: 'Selecciona al menos un examen para crear la orden.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 
   let idPacienteUsar = idPacienteFinal;
@@ -416,7 +464,12 @@ document.getElementById("btnGuardarOrden").addEventListener("click", async () =>
   if (!idPacienteUsar) {
     const id_sexo = document.getElementById("sexo")?.value;
     if (!id_sexo) {
-      return Swal.fire({ icon: 'warning', text: 'Debes seleccionar un sexo válido.' });
+      return Swal.fire({
+        icon: 'warning',
+        title: '¡Advertencia!',
+        text: 'Debes seleccionar un sexo válido.',
+        customClass: { popup: 'swal-mover-derecha' }
+      });
     }
 
     const paciente = {
@@ -443,7 +496,12 @@ document.getElementById("btnGuardarOrden").addEventListener("click", async () =>
 
     } catch (error) {
       console.error("❌ Error al guardar paciente:", error);
-      return Swal.fire({ icon: 'error', title: 'Error', text: 'Error al agregar el paciente.' });
+      return Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al agregar el paciente.',
+        customClass: { popup: 'swal-mover-derecha' }
+      });
     }
   }
 
@@ -451,7 +509,7 @@ document.getElementById("btnGuardarOrden").addEventListener("click", async () =>
     const resOrden = await fetch('/api/nueva-orden/addOrder', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id_paciente: idPacienteUsar })
+      body: JSON.stringify({ id_paciente: idPacienteUsar, id_doctor: idDoctorReferente || null })
     });
 
     const dataOrden = await resOrden.json();
@@ -476,9 +534,10 @@ document.getElementById("btnGuardarOrden").addEventListener("click", async () =>
     // Espera confirmación del usuario antes de generar PDF
     Swal.fire({
       icon: 'success',
-      title: 'Orden registrada',
+      title: '¡Éxito!',
       text: `La orden fue registrada correctamente. Orden número: ${idOrden}`,
-      confirmButtonText: 'Entendido'
+      confirmButtonText: 'Entendido',
+      customClass: { popup: 'swal-mover-derecha' }
     }).then(() => {
       // =================== GENERAR PDF ELEGANTE =====================
       const img = new Image();
@@ -596,7 +655,12 @@ document.getElementById("btnGuardarOrden").addEventListener("click", async () =>
 
   } catch (error) {
     console.error("❌ Error al crear orden:", error);
-    Swal.fire({ icon: 'error', title: 'Error', text: error.message || 'Hubo un problema al crear la orden.' });
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: error.message || 'Hubo un problema al crear la orden.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 });
 
@@ -629,3 +693,89 @@ function initNeworder() {
 }
 window.initNeworder = initNeworder;
 } // Cierre del bloque if (window.neworderLoaded)
+
+// ===================== 🔍 Buscar Doctor Referente =====================
+let idDoctorReferente = null;
+
+const btnBuscarDoctor = document.getElementById("btnBuscarDoctor");
+const inputDoctor = document.getElementById("doctor_referente");
+
+// Crear contenedor para mostrar resultados
+let contenedorResultadosDoctor = document.createElement('div');
+contenedorResultadosDoctor.id = 'resultadosDoctor';
+contenedorResultadosDoctor.style.position = 'relative';
+contenedorResultadosDoctor.style.zIndex = '1000';
+inputDoctor.parentNode.appendChild(contenedorResultadosDoctor);
+
+btnBuscarDoctor.addEventListener("click", async () => {
+  const nombre = inputDoctor.value.trim();
+  idDoctorReferente = null;
+  contenedorResultadosDoctor.innerHTML = '';
+  if (nombre.length < 3) {
+    return Swal.fire({
+      icon: 'warning',
+      title: '¡Advertencia!',
+      text: 'Escribe al menos 3 letras del nombre o apellido del doctor.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
+  }
+  try {
+    const res = await fetch('/api/doctores/buscarNombre', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre })
+    });
+    const data = await res.json();
+    if (data.success && Array.isArray(data.doctores) && data.doctores.length > 0) {
+      if (data.doctores.length === 1) {
+        // Solo un doctor encontrado
+        idDoctorReferente = data.doctores[0].id;
+        inputDoctor.value = data.doctores[0].nombre + ' ' + data.doctores[0].apellido;
+        Swal.fire({
+          icon: 'success',
+          title: 'Doctor encontrado',
+          text: 'Se seleccionó: ' + inputDoctor.value,
+          customClass: { popup: 'swal-mover-derecha' }
+        });
+      } else {
+        // Varios doctores encontrados, mostrar tabla
+        let tabla = `<table class='table table-bordered table-sm bg-white' style='margin-top:5px;'>`;
+        tabla += `<thead><tr><th>Nombre</th><th>Apellido</th><th>Especialidad</th><th>Seleccionar</th></tr></thead><tbody>`;
+        data.doctores.forEach(doc => {
+          tabla += `<tr><td>${doc.nombre}</td><td>${doc.apellido}</td><td>${doc.especialidad||''}</td><td><button class='btn btn-success btn-sm seleccionar-doctor' data-id='${doc.id}' data-nombre='${doc.nombre}' data-apellido='${doc.apellido}'>Elegir</button></td></tr>`;
+        });
+        tabla += `</tbody></table>`;
+        contenedorResultadosDoctor.innerHTML = tabla;
+        // Delegar evento para seleccionar doctor
+        contenedorResultadosDoctor.querySelectorAll('.seleccionar-doctor').forEach(btn => {
+          btn.addEventListener('click', function() {
+            idDoctorReferente = this.getAttribute('data-id');
+            inputDoctor.value = this.getAttribute('data-nombre') + ' ' + this.getAttribute('data-apellido');
+            contenedorResultadosDoctor.innerHTML = '';
+            Swal.fire({
+              icon: 'success',
+              title: 'Doctor seleccionado',
+              text: inputDoctor.value,
+              customClass: { popup: 'swal-mover-derecha' }
+            });
+          });
+        });
+      }
+    } else {
+      Swal.fire({
+        icon: 'info',
+        title: 'Sin resultados',
+        text: 'No se encontró ningún doctor con ese nombre o apellido.',
+        customClass: { popup: 'swal-mover-derecha' }
+      });
+    }
+  } catch (error) {
+    console.error("❌ Error buscando doctor:", error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error al buscar doctor.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
+  }
+});

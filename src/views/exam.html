@@ -64,7 +64,7 @@
     }
 
     #buscadorExamenes {
-      max-width: 250px;
+      max-width: 300px;
     }
 
 /* Estilo general del dropdown */
@@ -157,41 +157,41 @@
 
 <!-- Ventana para agregar examen -->
 <div class="modal fade" id="addExamModal" tabindex="-1" aria-labelledby="addExamModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-md">
-    <div class="modal-content border-0 shadow">
-      <div class="modal-header bg-gradient-dark">
-        <h5 class="modal-title text-white" id="addExamModalLabel">Nuevo examen</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+  <div class="modal-dialog modal-dialog-centered modal-xl" style="max-width: 930px;">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 10px; background: #fff;">
+      <div class="modal-header" style="background: linear-gradient(90deg, #232526 0%, #414345 100%); border-top-left-radius: 10px; border-top-right-radius: 10px; min-height: 50px;">
+        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Cerrar" style="z-index: 10;"></button>
       </div>
-      <div class="modal-body px-4">
+      <div class="modal-body px-5 py-4">
         <form id="addExamForm">
-          <div class="row g-3">
-            <div class="col-12 col-md-6">
+          <div class="row g-4">
+            <div class="col-12 col-md-3">
               <label for="nombreExamen" class="form-label">Nombre del examen</label>
-              <input type="text" class="form-control" id="nombreExamen" required
+              <input type="text" class="form-control form-control-lg" id="nombreExamen" required
                 pattern="[A-Za-zÁÉÍÓÚáéíóú ]+" title="El nombre solo puede contener letras y espacios.">
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-3">
               <label for="areaExamen" class="form-label">Área</label>
-              <select class="form-select" id="areaExamen" required></select>
+              <select class="form-select form-select-lg" id="areaExamen" required></select>
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-3">
               <label for="precioExamen" class="form-label">Precio</label>
-              <input type="number" class="form-control" id="precioExamen" min="0" required
+              <input type="number" class="form-control form-control-lg" id="precioExamen" min="0" required
                 title="El precio no puede ser negativo.">
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-3">
               <label for="codigoExamen" class="form-label">Código</label>
-              <input type="text" class="form-control" id="codigoExamen" readonly />
+              <input type="text" class="form-control form-control-lg" id="codigoExamen" readonly />
             </div>
             <div class="col-12 col-md-6">
               <label for="indicacionesExamen" class="form-label">Indicaciones</label>
-              <input type="text" class="form-control" id="indicacionesExamen" placeholder="Indicaciones para el paciente...">
+              <input type="text" class="form-control form-control-lg" id="indicacionesExamen" placeholder="Indicaciones para el paciente...">
             </div>
           </div>
-          <div class="text-end mt-4">
-            <button type="submit" class="btn btn-dark">
-              <i class="material-symbols-rounded align-middle">check</i> Guardar
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button type="button" class="btn btn-outline-secondary btn-lg px-4" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-dark btn-lg d-flex align-items-center gap-2 px-4">
+              <i class="material-symbols-rounded"></i> Guardar
             </button>
           </div>
         </form>
@@ -202,39 +202,39 @@
 
 <!-- Ventana para ver/editar examen -->
 <div class="modal fade" id="viewEditExamModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-md">
-    <div class="modal-content border-0 shadow">
-      <div class="modal-header bg-gradient-dark">
-        <h5 class="modal-title text-white" id="viewEditExamTitle">Información del examen</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+  <div class="modal-dialog modal-dialog-centered modal-xl" style="max-width: 930px;">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 10px; background: #fff;">
+      <div class="modal-header" style="background: linear-gradient(90deg, #232526 0%, #414345 100%); border-top-left-radius: 10px; border-top-right-radius: 10px; min-height: 50px;">
+        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+        <h5 class="modal-title text-white visually-hidden" id="viewEditExamTitle">Información del examen</h5>
       </div>
-      <div class="modal-body px-4">
+      <div class="modal-body px-5 py-4">
         <form id="editExamForm">
           <input type="hidden" id="edit_id_examen">
-          <div class="row g-3">
-            <div class="col-12 col-md-6">
+          <div class="row g-4">
+            <div class="col-12 col-md-3">
               <label for="edit_nombreExamen" class="form-label">Nombre del examen</label>
-              <input type="text" class="form-control" id="edit_nombreExamen">
+              <input type="text" class="form-control form-control-lg" id="edit_nombreExamen">
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-3">
               <label for="edit_areaExamen" class="form-label">Área</label>
-              <select class="form-select" id="edit_areaExamen"></select>
+              <select class="form-select form-select-lg" id="edit_areaExamen"></select>
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-3">
               <label for="edit_precioExamen" class="form-label">Precio</label>
-              <input type="number" class="form-control" id="edit_precioExamen">
+              <input type="number" class="form-control form-control-lg" id="edit_precioExamen">
+            </div>
+            <div class="col-12 col-md-3">
+              <label for="edit_codigoExamen" class="form-label">Código</label>
+              <input type="text" class="form-control form-control-lg" id="edit_codigoExamen" readonly>
             </div>
             <div class="col-12 col-md-6">
-              <label for="edit_codigoExamen" class="form-label">Código</label>
-              <input type="text" class="form-control" id="edit_codigoExamen" readonly>
-            </div>
-            <div class="col-12">
               <label for="edit_indicacionesExamen" class="form-label">Indicaciones</label>
-              <input type="text" class="form-control" id="edit_indicacionesExamen">
+              <input type="text" class="form-control form-control-lg" id="edit_indicacionesExamen">
             </div>
           </div>
           <div class="text-end mt-4" id="btnGuardarCambiosExamContainer" style="display: none;">
-            <button type="submit" class="btn btn-dark">
+            <button type="submit" class="btn btn-dark btn-lg d-flex align-items-center gap-2 px-4">
               <i class="material-symbols-rounded align-middle">save</i> Guardar cambios
             </button>
           </div>

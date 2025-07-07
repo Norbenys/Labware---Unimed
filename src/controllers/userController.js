@@ -49,14 +49,65 @@ router.get('/roles', async (req, res) => {
 
 // ===================== AGREGAR NUEVO USUARIO =====================
 router.post('/addUser', async (req, res) => {
-  const { cedula, nombres, apellidos, fecha_nacimiento, telefono, email, titulo, usuario, password, rol } = req.body;
+  const { cedula, nombres, apellidos, fecha_nacimiento, telefono, correo, titulo, usuario, password, rol } = req.body;
+
+  // Validaciones del servidor
+  if (!cedula || !nombres || !apellidos || !fecha_nacimiento || !telefono || !correo || !usuario || !password || !rol) {
+    return res.status(400).json({ success: false, message: 'Todos los campos son obligatorios.' });
+  }
+
+  // Validar formato de cédula (solo números, mínimo 5 dígitos)
+  if (!/^\d{5,20}$/.test(cedula)) {
+    return res.status(400).json({ success: false, message: 'La cédula debe contener solo números (mínimo 5 dígitos).' });
+  }
+
+  // Validar nombres y apellidos (solo letras y espacios)
+  if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/.test(nombres) || !/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/.test(apellidos)) {
+    return res.status(400).json({ success: false, message: 'Los nombres y apellidos deben contener solo letras y espacios.' });
+  }
+
+  // Validar formato de correo
+  if (!/^\S+@\S+\.\S+$/.test(correo)) {
+    return res.status(400).json({ success: false, message: 'El formato del correo electrónico no es válido.' });
+  }
+
+  // Validar fecha de nacimiento
+  const hoy = new Date();
+  const fechaNac = new Date(fecha_nacimiento);
+  const edad = hoy.getFullYear() - fechaNac.getFullYear();
+  const cumpleEsteAño = hoy.getMonth() > fechaNac.getMonth() || (hoy.getMonth() === fechaNac.getMonth() && hoy.getDate() >= fechaNac.getDate());
+  const edadReal = cumpleEsteAño ? edad : edad - 1;
+  
+  if (fechaNac > hoy) {
+    return res.status(400).json({ success: false, message: 'La fecha de nacimiento no puede ser futura.' });
+  }
+  
+  if (edadReal < 18) {
+    return res.status(400).json({ success: false, message: 'El usuario debe ser mayor de 18 años.' });
+  }
+
+  // Validar longitud de usuario y contraseña
+  if (usuario.length < 3) {
+    return res.status(400).json({ success: false, message: 'El nombre de usuario debe tener al menos 3 caracteres.' });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ success: false, message: 'La contraseña debe tener al menos 6 caracteres.' });
+  }
 
   try {
+    // Verificar si el usuario ya existe
+    const [existingUser] = await db.query('SELECT id FROM usuarios WHERE usuario = ? OR cedula = ?', [usuario, cedula]);
+    
+    if (existingUser.length > 0) {
+      return res.status(400).json({ success: false, message: 'Ya existe un usuario con esa cédula o nombre de usuario.' });
+    }
+
     await db.query(`
       INSERT INTO usuarios 
         (cedula, nombres, apellidos, fecha_nacimiento, telefono, correo, id_titulo, usuario, contraseña, id_rol) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [cedula, nombres, apellidos, fecha_nacimiento, telefono, email, titulo, usuario, password, rol]);
+    `, [cedula, nombres, apellidos, fecha_nacimiento, telefono, correo, titulo, usuario, password, rol]);
 
     res.json({ success: true, message: 'Usuario agregado exitosamente.' });
   } catch (err) {
@@ -115,7 +166,58 @@ router.put('/update/:id', async (req, res) => {
     id_rol
   } = req.body;
 
+  // Validaciones del servidor
+  if (!cedula || !nombres || !apellidos || !fecha_nacimiento || !telefono || !correo || !usuario || !contraseña || !id_rol) {
+    return res.status(400).json({ success: false, message: 'Todos los campos son obligatorios.' });
+  }
+
+  // Validar formato de cédula (solo números, mínimo 5 dígitos)
+  if (!/^\d{5,20}$/.test(cedula)) {
+    return res.status(400).json({ success: false, message: 'La cédula debe contener solo números (mínimo 5 dígitos).' });
+  }
+
+  // Validar nombres y apellidos (solo letras y espacios)
+  if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/.test(nombres) || !/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/.test(apellidos)) {
+    return res.status(400).json({ success: false, message: 'Los nombres y apellidos deben contener solo letras y espacios.' });
+  }
+
+  // Validar formato de correo
+  if (!/^\S+@\S+\.\S+$/.test(correo)) {
+    return res.status(400).json({ success: false, message: 'El formato del correo electrónico no es válido.' });
+  }
+
+  // Validar fecha de nacimiento
+  const hoy = new Date();
+  const fechaNac = new Date(fecha_nacimiento);
+  const edad = hoy.getFullYear() - fechaNac.getFullYear();
+  const cumpleEsteAño = hoy.getMonth() > fechaNac.getMonth() || (hoy.getMonth() === fechaNac.getMonth() && hoy.getDate() >= fechaNac.getDate());
+  const edadReal = cumpleEsteAño ? edad : edad - 1;
+  
+  if (fechaNac > hoy) {
+    return res.status(400).json({ success: false, message: 'La fecha de nacimiento no puede ser futura.' });
+  }
+  
+  if (edadReal < 18) {
+    return res.status(400).json({ success: false, message: 'El usuario debe ser mayor de 18 años.' });
+  }
+
+  // Validar longitud de usuario y contraseña
+  if (usuario.length < 3) {
+    return res.status(400).json({ success: false, message: 'El nombre de usuario debe tener al menos 3 caracteres.' });
+  }
+
+  if (contraseña.length < 6) {
+    return res.status(400).json({ success: false, message: 'La contraseña debe tener al menos 6 caracteres.' });
+  }
+
   try {
+    // Verificar si el usuario ya existe (excluyendo el usuario actual)
+    const [existingUser] = await db.query('SELECT id FROM usuarios WHERE (usuario = ? OR cedula = ?) AND id != ?', [usuario, cedula, id]);
+    
+    if (existingUser.length > 0) {
+      return res.status(400).json({ success: false, message: 'Ya existe un usuario con esa cédula o nombre de usuario.' });
+    }
+
     await db.query(`
       UPDATE usuarios SET
         cedula = ?,

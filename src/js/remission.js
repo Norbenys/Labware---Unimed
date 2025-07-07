@@ -26,14 +26,24 @@ async function marcarComoEntregada(idOrden) {
     });
     const data = await res.json();
     if (data.success) {
-      Swal.fire({ icon: 'success', text: `Orden #${idOrden} marcada como entregada.` });
+      Swal.fire({
+        icon: 'success',
+        title: '¡Éxito!',
+        text: `Orden #${idOrden} marcada como entregada.`,
+        customClass: { popup: 'swal-mover-derecha' }
+      });
       cargarRemitidos();
     } else {
       throw new Error('No se pudo actualizar el estado.');
     }
   } catch (error) {
     console.error('Error al marcar como entregada:', error);
-    Swal.fire({ icon: 'error', text: 'Error al actualizar la orden.' });
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error al actualizar la orden.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 
@@ -44,7 +54,8 @@ function confirmarEntrega(idOrden) {
     icon: 'question',
     showCancelButton: true,
     confirmButtonText: 'Sí, entregar',
-    cancelButtonText: 'No todavía'
+    cancelButtonText: 'No todavía',
+    customClass: { popup: 'swal-mover-derecha' }
   }).then(result => {
     if (result.isConfirmed) {
       marcarComoEntregada(idOrden);
@@ -66,7 +77,12 @@ async function cargarRemitidos() {
     aplicarFiltroYPaginacion();
   } catch (err) {
     console.error('Error al cargar remitidos:', err);
-    Swal.fire({ icon: 'error', text: 'No se pudieron cargar las órdenes remitidas.' });
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudieron cargar las órdenes remitidas.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 
@@ -217,7 +233,12 @@ async function obtenerDatosOrden(idOrden) {
     return data.data;
   } catch (error) {
     console.error('Error al obtener datos de la orden:', error);
-    Swal.fire({ icon: 'error', text: 'Error al obtener los datos de la orden.' });
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error al obtener los datos de la orden.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
     return null;
   }
 }
@@ -375,7 +396,12 @@ async function exportarPDF(idOrden) {
     };
   } catch (error) {
     console.error('Error al exportar PDF:', error);
-    Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo generar el archivo PDF.' });
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudo generar el archivo PDF.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 
@@ -540,7 +566,12 @@ async function imprimirOrden(idOrden) {
     };
   } catch (error) {
     console.error('Error al imprimir:', error);
-    Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo generar la impresión.' });
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudo generar la impresión.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 
@@ -708,7 +739,8 @@ async function enviarWhatsApp(idOrden, nombrePaciente, nombreExamen) {
         inputLabel: 'Número del paciente',
         inputValue: numero,
         confirmButtonText: 'Abrir WhatsApp',
-        showCancelButton: true
+        showCancelButton: true,
+        customClass: { popup: 'swal-mover-derecha' }
       }).then(result => {
         if (result.isConfirmed && result.value) {
           const numeroFinal = result.value.trim();
@@ -719,14 +751,20 @@ async function enviarWhatsApp(idOrden, nombrePaciente, nombreExamen) {
             icon: 'info',
             title: 'Adjunta el PDF',
             text: 'Se ha descargado el archivo PDF. Ahora puedes adjuntarlo manualmente en el chat de WhatsApp.',
-            confirmButtonText: 'OK'
+            confirmButtonText: 'OK',
+            customClass: { popup: 'swal-mover-derecha' }
           });
         }
       });
     };
   } catch (error) {
     console.error('Error al generar y preparar el envío:', error);
-    Swal.fire({ icon: 'error', text: 'No se pudo preparar el envío por WhatsApp.' });
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudo preparar el envío por WhatsApp.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 }
 

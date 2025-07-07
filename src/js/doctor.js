@@ -1,6 +1,6 @@
 (() => {
 let paginaActualD = 1;
-const registrosPorPaginaD = 5;
+const registrosPorPaginaD = 6;
 
 // =================== Cargar especialidades ===================
 async function cargarEspecialidades() {
@@ -208,7 +208,7 @@ document.getElementById('editDoctorForm').addEventListener('submit', async funct
         icon: 'success',
         title: '¡Éxito!',
         text: 'Doctor actualizado correctamente.',
-        confirmButtonText: 'Aceptar'
+        customClass: { popup: 'swal-mover-derecha' }
       }).then(() => {
         const modal = bootstrap.Modal.getInstance(document.getElementById('viewEditDoctorModal'));
         modal.hide();
@@ -219,7 +219,7 @@ document.getElementById('editDoctorForm').addEventListener('submit', async funct
         icon: 'error',
         title: 'Error',
         text: result.message || 'No se pudo actualizar el doctor.',
-        confirmButtonText: 'Aceptar'
+        customClass: { popup: 'swal-mover-derecha' }
       });
     }
   } catch (error) {
@@ -228,7 +228,7 @@ document.getElementById('editDoctorForm').addEventListener('submit', async funct
       icon: 'error',
       title: 'Error',
       text: 'Ocurrió un error inesperado.',
-      confirmButtonText: 'Aceptar'
+      customClass: { popup: 'swal-mover-derecha' }
     });
   }
 });
@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
           icon: 'success',
           title: '¡Éxito!',
           text: 'Doctor agregado correctamente.',
-          confirmButtonText: 'Aceptar'
+          customClass: { popup: 'swal-mover-derecha' }
         }).then(() => {
           form.reset();
           const modal = bootstrap.Modal.getInstance(document.getElementById('addDoctorModal'));
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
           icon: 'error',
           title: 'Error',
           text: data.message || 'No se pudo agregar el doctor.',
-          confirmButtonText: 'Aceptar'
+          customClass: { popup: 'swal-mover-derecha' }
         });
       }
     } catch (error) {
@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
         icon: 'error',
         title: 'Error',
         text: 'Ocurrió un error inesperado.',
-        confirmButtonText: 'Aceptar'
+        customClass: { popup: 'swal-mover-derecha' }
       });
     }
   });
@@ -316,7 +316,8 @@ document.addEventListener('click', async (e) => {
       confirmButtonText: 'Eliminar',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6'
+      cancelButtonColor: '#3085d6',
+      customClass: { popup: 'swal-mover-derecha' }
     });
 
     if (confirmacion.isConfirmed) {
@@ -332,16 +333,16 @@ document.addEventListener('click', async (e) => {
           const fila = document.querySelector(`tr[data-doctorid="${doctorId}"]`);
           if (fila) fila.remove();
 
-          await Swal.fire('Eliminado', result.message, 'success');
+          await Swal.fire('Eliminado', result.message, 'success', { customClass: { popup: 'swal-mover-derecha' } });
 
           // ✅ Si deseas actualizar toda la tabla completa, descomenta esta línea:
           // cargarDoctores();
         } else {
-          Swal.fire('Error', result.message || 'No se pudo eliminar el doctor.', 'error');
+          Swal.fire('Error', result.message || 'No se pudo eliminar el doctor.', 'error', { customClass: { popup: 'swal-mover-derecha' } });
         }
       } catch (err) {
         console.error(err);
-        Swal.fire('Error', 'Hubo un problema al intentar eliminar.', 'error');
+        Swal.fire('Error', 'Hubo un problema al intentar eliminar.', 'error', { customClass: { popup: 'swal-mover-derecha' } });
       }
     }
   }

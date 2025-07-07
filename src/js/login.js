@@ -14,9 +14,6 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     const data = await response.json();
 
     if (data.success) {
-      // ✅ Guardar el id_rol en localStorage
-      localStorage.setItem('rol', data.rol);
-
       Swal.fire({
         icon: 'success',
         title: '¡Ingreso exitoso!',

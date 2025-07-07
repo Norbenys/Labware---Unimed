@@ -22,6 +22,7 @@
   <!-- CSS Files -->
   <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.2.0" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" />
   <style>
     /* Asegura que el main-content no se meta debajo del sidebar */
     #main-content {
@@ -39,10 +40,10 @@
  <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2 bg-white my-2" id="sidenav-main">
   <div class="sidenav-header">
     <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-    <a class="navbar-brand px-4 py-3 m-0" href="#" data-view="views/dashboard.html">
-      <img src="../assets/img/logo-ct-dark.png" class="navbar-brand-img" width="26" height="26" alt="main_logo">
-      <span class="ms-1 text-sm text-dark">LABWARE</span>
-    </a>
+    <div class="navbar-brand px-4 py-3 m-0" style="display: flex; align-items: center;">
+      <img src="../assets/img/LABWARE-LOGO-GRIS.png" class="navbar-brand-img" width="32" height="32" alt="labware_logo">
+      <span class="ms-2 text-sm" style="font-family: Inter, Arial, sans-serif; font-weight: 700; letter-spacing: 1px; font-size: 2.8rem; color: #737373;">LABWARE</span>
+    </div>
   </div>
   <hr class="horizontal dark mt-0 mb-2">
   <div class="scroll-wrapper">
@@ -322,7 +323,10 @@
           cancelButtonColor: '#3085d6',
           backdrop: true,
           allowOutsideClick: false,
-          allowEscapeKey: true
+          allowEscapeKey: true,
+          customClass: {
+            popup: 'swal-mover-derecha'
+          }
         }).then((result) => {
           document.body.style.overflow = 'auto';
           if (result.isConfirmed) {
@@ -374,13 +378,13 @@
         // 🧭 Actualiza el título del breadcrumb
         if (breadcrumbTitle) {
           const traducciones = {
-            'dashboard': 'Panel',
+            'dashboard': 'Panel de control',
             'user': 'Usuarios',
             'patient': 'Pacientes',
             'doctor': 'Doctores',
             'exam': 'Exámenes',
             'quoter': 'Cotizador',
-            'order': 'Órdenes',
+            'order': 'Recepción',
             'report': 'Análisis',
             'validated': 'Validación',
             'remission': 'Remisión',

@@ -2,16 +2,14 @@
   <style>
     /* Contenedor personalizable */
     .contenedor-paciente {
-      max-width: 1100px;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 0 15px;
+      width: 100%;
+      margin-top: 2rem;
     }
 
     /* Estilo visual de la tarjeta */
     .formulario-paciente {
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+      /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); */
     }
 
     /* Títulos y texto */
@@ -256,31 +254,45 @@
       /* Sin fondo */
     }
 
+    #btnBuscarDoctor {
+      height: 43px;
+      min-width: 42px;
+    }
+
   </style>
 
 
     <!-- SECCIÓN: Datos del paciente - NUEVA ORDEN -->
-    <div class="contenedor-paciente mx-auto">
+    <div class="container-fluid py-4">
       <div class="card p-4 mb-4 formulario-paciente">
         <h5 class="mb-1 text-dark fw-bold"></h5>
 
 
-        <!-- Fecha y hora de creación de la orden -->
+        <!-- Fecha y hora de creación de la orden + Doctor que refiere -->
         <div class="row g-3 mb-3">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <label for="fecha_creacion" class="form-label">Fecha de creación</label>
             <input type="date" class="form-control" id="fecha_creacion" name="fecha_creacion" />
           </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
             <label for="hora_creacion" class="form-label">Hora de creación</label>
             <input type="time" class="form-control" id="hora_creacion" name="hora_creacion" />
+          </div>
+          <div class="col-md-4">
+            <label for="doctor_referente" class="form-label">Doctor que refiere</label>
+            <div class="d-flex">
+              <input type="text" class="form-control me-2" id="doctor_referente" name="doctor_referente" autocomplete="off" style="border: 1px solid #ced4da; border-radius: 0.375rem; background-color: #fff; color: #495057; font-size: 14px; padding: 0.55rem 0.75rem; transition: border-color 0.2s ease-in-out, box-shadow 0.2s; height: 45px;" />
+              <button class="btn btn-dark" type="button" id="btnBuscarDoctor">
+                <i class="material-symbols-rounded align-middle">search</i>
+              </button>
+            </div>
           </div>
         </div>
 
         <form id="newOrderForm">
+          <!-- Fila única: 4 columnas -->
           <div class="row g-3">
-            <!-- Campo de Cédula con botón buscar -->
-            <div class="col-md-6">
+            <div class="col-md-3">
               <label for="cedula" class="form-label">Cédula</label>
               <div class="d-flex">
                 <input type="text" class="form-control me-2" id="cedula" required />
@@ -289,9 +301,7 @@
                 </button>
               </div>
             </div>
-
-            <!-- Campo de Fecha de nacimiento con botón buscar por fecha -->
-            <div class="col-md-6">
+            <div class="col-md-3">
               <label for="fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
               <div class="d-flex">
                 <input type="date" class="form-control me-2" id="fecha_nacimiento" required />
@@ -300,85 +310,65 @@
                 </button>
               </div>
             </div>
-
-            <div class="col-md-6">
+            <div class="col-md-3">
               <label for="nombres" class="form-label">Nombres</label>
               <input type="text" class="form-control" id="nombres" required />
             </div>
-
-            <div class="col-md-6">
+            <div class="col-md-3">
               <label for="apellidos" class="form-label">Apellidos</label>
               <input type="text" class="form-control" id="apellidos" required />
             </div>
-
-            <div class="col-md-6">
+          </div>
+          <div class="row g-3 mt-2">
+            <div class="col-md-3">
               <label for="sexo" class="form-label">Sexo</label>
               <select class="form-select" id="sexo" required>
                 <option value="">Seleccione...</option>
               </select>
             </div>
-
-            <div class="col-md-6">
+            <div class="col-md-3">
               <label for="telefono" class="form-label">Teléfono</label>
               <input type="text" class="form-control" id="telefono" required />
             </div>
-
-            <div class="col-md-6">
+            <div class="col-md-3">
               <label for="correo" class="form-label">Correo electrónico</label>
               <input type="email" class="form-control" id="correo" required />
             </div>
-
-            <div class="col-md-6">
+            <div class="col-md-3">
               <label for="diagnostico" class="form-label">Diagnóstico</label>
               <input type="text" class="form-control" id="diagnostico" />
             </div>
           </div>
 
           <!-- SECCIÓN: Selección de exámenes -->
-          <div class="card mt-5">
-            <div class="card-header pb-0">
-              <h6 class="text-dark fw-bold mb-0">Exámenes:</h6>
-
-              <div class="row mt-4 g-2 position-relative">
-                <!-- Input + Dropdown por Nombre -->
-                <div class="col-md-6 position-relative">
-                  <div class="input-group input-group-outline">
-                    <input type="text" id="buscadorNombreExamen" class="form-control"
-                      placeholder="Ej: Hemograma, Glucosa..." autocomplete="off">
-                  </div>
-                  <ul id="dropdownNombreResultados" class="dropdown-menu show w-100 mt-1"
-                    style="position: absolute; z-index: 1000;"></ul>
-                </div>
-                <!-- Input + Dropdown por Código -->
-                <div class="col-md-6 position-relative">
-                  <div class="input-group input-group-outline">
-                    <input type="text" id="buscadorCodigoExamen" class="form-control"
-                      placeholder="Ej: HEM001, BIO002..." autocomplete="off">
-                  </div>
-                  <ul id="dropdownCodigoResultados" class="dropdown-menu show w-100 mt-1"
-                    style="position: absolute; z-index: 1000;"></ul>
-                </div>
-
-                <div class="card-body px-3 pb-3">
-                  <table id="tablaExamenesSeleccionados" class="table table-hover align-items-center mb-0 w-100">
-                    <thead>
-                      <tr>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nombre</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Código</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Área</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Precio</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Indicaciones
-                        </th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
-                          Opción</th>
-                      </tr>
-                    </thead>
-                    <tbody id="examenTableBody">
-                      <!-- Agregado dinámico con JS -->
-                    </tbody>
-
-                  </table>
-                </div>
+          <div class="mt-5">
+            <div class="row g-3 mb-3">
+              <div class="col-md-6 position-relative">
+                <input type="text" id="buscadorNombreExamen" class="form-control" placeholder="Ej: Hemograma, Glucosa..." autocomplete="off">
+                <ul id="dropdownNombreResultados" class="dropdown-menu show w-100 mt-1" style="position: absolute; z-index: 1000;"></ul>
+              </div>
+              <div class="col-md-6 position-relative">
+                <input type="text" id="buscadorCodigoExamen" class="form-control" placeholder="Ej: HEM001, BIO002..." autocomplete="off">
+                <ul id="dropdownCodigoResultados" class="dropdown-menu show w-100 mt-1" style="position: absolute; z-index: 1000;"></ul>
+              </div>
+            </div>
+            <div id="contenedorTablaExamenes" class="card mt-3" style="display: none;">
+              <div class="card-body px-3 pb-3">
+                <table id="tablaExamenesSeleccionados" class="table table-hover align-items-center mb-0 w-100">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nombre</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Código</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Área</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Precio</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Indicaciones</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Opción</th>
+                    </tr>
+                  </thead>
+                  <tbody id="examenTableBody">
+                    <!-- Agregado dinámico con JS -->
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

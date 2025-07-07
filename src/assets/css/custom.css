@@ -67,3 +67,73 @@ html, body {
 .input-group.input-group-outline.is-filled .form-label {
   color: #b9d32c !important;
 }
+
+input:focus, input[type="search"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #ccc !important;
+}
+
+#buscadorOrdenes.form-control {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #ccc !important;
+}
+
+#buscadorExamenes.form-control {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #ccc !important;
+}
+
+#buscadorUsuarios.form-control {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #ccc !important;
+}
+
+#buscadorPacientes.form-control {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #ccc !important;
+}
+
+#buscadorDoctores.form-control {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #ccc !important;
+}
+
+#buscadorExamenesCotizador.form-control {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #ccc !important;
+}
+
+#buscadorValidados.form-control {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #ccc !important;
+}
+
+#buscadorNombreExamen.form-control,
+#buscadorCodigoExamen.form-control {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #ccc !important;
+}
+
+#buscadorNombreExamen.form-control:focus,
+#buscadorCodigoExamen.form-control:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #ccc !important;
+}
+
+.swal-mover-derecha {
+  left: auto !important;
+  right:-8.5% !important; /* Más a la derecha */
+  top: 40% !important;
+  transform: translateY(-50%) !important;
+  margin: 0 !important;
+}

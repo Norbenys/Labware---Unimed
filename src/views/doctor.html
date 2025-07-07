@@ -63,7 +63,7 @@
 
   /* Buscador para doctores */
   #buscadorDoctores {
-    max-width: 250px;
+    max-width: 300px;
   }
 
    /* Estilo general del dropdown */
@@ -162,48 +162,48 @@
       <!-- Ventana para agregar doctores -->
       <div class="modal fade" id="addDoctorModal" tabindex="-1" aria-labelledby="addDoctorModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-md">
-          <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-gradient-dark">
-              <h5 class="modal-title text-white" id="addDoctorModalLabel">Agregar Doctor</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                aria-label="Cerrar"></button>
+        <div class="modal-dialog modal-dialog-centered modal-xl" style="max-width: 930px;">
+          <div class="modal-content border-0 shadow-lg" style="border-radius: 10px; background: #fff;">
+            <div class="modal-header" style="background: linear-gradient(90deg, #232526 0%, #414345 100%); border-top-left-radius: 10px; border-top-right-radius: 10px; min-height: 50px;">
+              <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal"
+                aria-label="Cerrar" style="z-index: 10;"></button>
             </div>
-            <div class="modal-body px-4">
+            <div class="modal-body px-5 py-4">
               <form id="addDoctorForm">
-                <div class="row g-3">
-                  <div class="col-12 col-md-6">
+                <div class="row g-4">
+                  <div class="col-12 col-md-3">
                     <label for="cedula" class="form-label">Cédula</label>
-                    <input type="text" class="form-control" id="cedula" required>
+                    <input type="text" class="form-control form-control-lg" id="cedula" required>
                   </div>
-                  <div class="col-12 col-md-6">
+                  <div class="col-12 col-md-3">
                     <label for="fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
-                    <input type="date" class="form-control" id="fecha_nacimiento" required>
+                    <input type="date" class="form-control form-control-lg" id="fecha_nacimiento" required>
                   </div>
-                  <div class="col-12 col-md-6">
+                  <div class="col-12 col-md-3">
                     <label for="nombres" class="form-label">Nombres</label>
-                    <input type="text" class="form-control" id="nombres" required>
+                    <input type="text" class="form-control form-control-lg" id="nombres" required>
                   </div>
-                  <div class="col-12 col-md-6">
+                  <div class="col-12 col-md-3">
                     <label for="apellidos" class="form-label">Apellidos</label>
-                    <input type="text" class="form-control" id="apellidos" required>
+                    <input type="text" class="form-control form-control-lg" id="apellidos" required>
                   </div>
-                  <div class="col-12 col-md-6">
+                  <div class="col-12 col-md-3">
                     <label for="telefono" class="form-label">Teléfono</label>
-                    <input type="text" class="form-control" id="telefono" required>
+                    <input type="text" class="form-control form-control-lg" id="telefono" required>
+                  </div>
+                  <div class="col-12 col-md-3">
+                    <label for="correo" class="form-label">Correo electrónico</label>
+                    <input type="email" class="form-control form-control-lg" id="correo" required>
                   </div>
                   <div class="col-12 col-md-6">
-                    <label for="correo" class="form-label">Correo electrónico</label>
-                    <input type="email" class="form-control" id="correo" required>
-                  </div>
-                  <div class="col-12 col-md-12">
                     <label for="especialidad" class="form-label">Especialidad</label>
-                    <select class="form-select" id="doctor_especialidad" required></select>
+                    <select class="form-select form-select-lg" id="doctor_especialidad" required></select>
                   </div>
                 </div>
-                <div class="text-end mt-4">
-                  <button type="submit" class="btn btn-dark">
-                    <i class="material-symbols-rounded align-middle">check</i> Guardar
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                  <button type="button" class="btn btn-outline-secondary btn-lg px-4" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn btn-dark btn-lg d-flex align-items-center gap-2 px-4">
+                    <i class="material-symbols-rounded"></i> Guardar
                   </button>
                 </div>
               </form>
@@ -214,47 +214,47 @@
 
     <!-- Ventana para ver/editar doctores -->
 <div class="modal fade" id="viewEditDoctorModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-md">
-    <div class="modal-content border-0 shadow">
-      <div class="modal-header bg-gradient-dark">
-        <h5 class="modal-title text-white" id="viewEditTitle">Información del Doctor</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+  <div class="modal-dialog modal-dialog-centered modal-xl" style="max-width: 930px;">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 10px; background: #fff;">
+      <div class="modal-header" style="background: linear-gradient(90deg, #232526 0%, #414345 100%); border-top-left-radius: 10px; border-top-right-radius: 10px; min-height: 50px;">
+        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+        <h5 class="modal-title text-white visually-hidden" id="viewEditTitle">Información del Doctor</h5>
       </div>
-      <div class="modal-body px-4">
+      <div class="modal-body px-5 py-4">
         <form id="editDoctorForm">
           <input type="hidden" id="edit_id_doctor">
-          <div class="row g-3">
-            <div class="col-12 col-md-6">
+          <div class="row g-4">
+            <div class="col-12 col-md-3">
               <label for="edit_cedula" class="form-label">Cédula</label>
-              <input type="text" class="form-control" id="edit_cedula">
+              <input type="text" class="form-control form-control-lg" id="edit_cedula">
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-3">
               <label for="edit_fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
-              <input type="date" class="form-control" id="edit_fecha_nacimiento">
+              <input type="date" class="form-control form-control-lg" id="edit_fecha_nacimiento">
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-3">
               <label for="edit_nombres" class="form-label">Nombres</label>
-              <input type="text" class="form-control" id="edit_nombres">
+              <input type="text" class="form-control form-control-lg" id="edit_nombres">
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-3">
               <label for="edit_apellidos" class="form-label">Apellidos</label>
-              <input type="text" class="form-control" id="edit_apellidos">
+              <input type="text" class="form-control form-control-lg" id="edit_apellidos">
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-3">
               <label for="edit_telefono" class="form-label">Teléfono</label>
-              <input type="text" class="form-control" id="edit_telefono">
+              <input type="text" class="form-control form-control-lg" id="edit_telefono">
+            </div>
+            <div class="col-12 col-md-3">
+              <label for="edit_correo" class="form-label">Correo electrónico</label>
+              <input type="email" class="form-control form-control-lg" id="edit_correo">
             </div>
             <div class="col-12 col-md-6">
-              <label for="edit_correo" class="form-label">Correo electrónico</label>
-              <input type="email" class="form-control" id="edit_correo">
-            </div>
-            <div class="col-12">
               <label for="edit_especialidad" class="form-label">Especialidad</label>
-              <select class="form-select" id="edit_especialidad"></select>
+              <select class="form-select form-select-lg" id="edit_especialidad"></select>
             </div>
           </div>
           <div class="text-end mt-4" id="btnGuardarCambiosContainer" style="display: none;">
-            <button type="submit" class="btn btn-dark">
+            <button type="submit" class="btn btn-dark btn-lg d-flex align-items-center gap-2 px-4">
               <i class="material-symbols-rounded align-middle">save</i> Guardar cambios
             </button>
           </div>

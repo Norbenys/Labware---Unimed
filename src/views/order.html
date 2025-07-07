@@ -1,7 +1,7 @@
 
   <style>
     #buscadorOrdenes {
-      max-width: 250px;
+      max-width: 300px;
       /* Puedes cambiar a 250px, 400px, etc. */
     }
 
@@ -113,6 +113,8 @@
 
 </style>
 
+ 
+
     <!-- Tabla de órdenes -->
     <div class="container-fluid py-4">
       <div class="row mb-4">
@@ -165,31 +167,31 @@
 
     <!-- Ventana para ver/editar Orden -->
     <div class="modal fade" id="verEditarOrdenModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content border-0 shadow">
-          <div class="modal-header bg-gradient-dark">
-            <h5 class="modal-title text-white" id="ordenModalTitle">Información de Orden</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      <div class="modal-dialog modal-dialog-centered modal-xl" style="max-width: 930px;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 10px; background: #fff;">
+          <div class="modal-header" style="background: linear-gradient(90deg, #232526 0%, #414345 100%); border-top-left-radius: 10px; border-top-right-radius: 10px; min-height: 50px;">
+            <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+            <h5 class="modal-title text-white visually-hidden" id="ordenModalTitle">Información de Orden</h5>
           </div>
-          <div class="modal-body px-4">
+          <div class="modal-body px-5 py-4">
             <form id="ordenForm">
               <input type="hidden" id="orden_id">
-              <div class="row g-3">
-                <div class="col-12 col-md-6">
+              <div class="row g-4">
+                <div class="col-12 col-md-3">
                   <label for="orden_paciente" class="form-label">Paciente</label>
-                  <input type="text" class="form-control" id="orden_paciente" disabled>
+                  <input type="text" class="form-control form-control-lg" id="orden_paciente" disabled>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="orden_fecha" class="form-label">Fecha</label>
-                  <input type="date" class="form-control" id="orden_fecha" disabled>
+                  <input type="date" class="form-control form-control-lg" id="orden_fecha" disabled>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="orden_hora" class="form-label">Hora</label>
-                  <input type="time" class="form-control" id="orden_hora" disabled>
+                  <input type="time" class="form-control form-control-lg" id="orden_hora" disabled>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-3">
                   <label for="orden_estado" class="form-label">Estado</label>
-                  <select class="form-select" id="orden_estado" disabled>
+                  <select class="form-select form-select-lg" id="orden_estado" disabled>
                     <option value="Pendiente de pago">Pendiente de pago</option>
                     <option value="Pagada">Pagada</option>
                     <option value="Anulada">Anulada</option>
@@ -197,7 +199,7 @@
                 </div>
               </div>
               <div class="text-end mt-4" id="btnGuardarOrdenContainer" style="display: none;">
-                <button type="submit" class="btn btn-dark" id="btnGuardarOrden">
+                <button type="submit" class="btn btn-dark btn-lg d-flex align-items-center gap-2 px-4" id="btnGuardarOrden">
                   <i class="material-symbols-rounded align-middle">save</i> Guardar cambios
                 </button>
               </div>

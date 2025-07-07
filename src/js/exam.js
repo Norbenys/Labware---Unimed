@@ -1,6 +1,6 @@
 (() => {
 let paginaActualE = 1;
-const registrosPorPaginaE = 3; // Puedes ajustar este número
+const registrosPorPaginaE = 6; // Puedes ajustar este número
 
 const BASE_URL = 'http://localhost:3000/api/examenes';
 
@@ -20,7 +20,12 @@ async function loadAreas() {
         select.appendChild(option);
       });
     } else {
-      Swal.fire('Error', 'Error al cargar las áreas.', 'error');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al cargar las áreas.',
+        customClass: { popup: 'swal-mover-derecha' }
+      });
     }
   } catch (error) {
     console.error('Error al cargar áreas:', error);
@@ -166,14 +171,24 @@ document.getElementById('addExamForm').addEventListener('submit', async function
   const result = await response.json();
 
   if (result.success) {
-    Swal.fire('¡Éxito!', 'Examen agregado correctamente.', 'success');
+    Swal.fire({
+      icon: 'success',
+      title: '¡Éxito!',
+      text: 'Examen agregado correctamente.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
     cargarExamenes();
     document.getElementById('addExamForm').reset();
     document.getElementById('codigoExamen').value = '';
     const modal = bootstrap.Modal.getInstance(document.getElementById('addExamModal'));
     modal.hide();
   } else {
-    Swal.fire('Error', 'Error al agregar el examen.', 'error');
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error al agregar el examen.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 });
 
@@ -264,7 +279,8 @@ document.getElementById('edit_areaExamen').addEventListener('change', async func
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Sí, cambiar',
-    cancelButtonText: 'No, mantener'
+    cancelButtonText: 'No, mantener',
+    customClass: { popup: 'swal-mover-derecha' }
   });
 
   if (confirmar.isConfirmed) {
@@ -274,7 +290,12 @@ document.getElementById('edit_areaExamen').addEventListener('change', async func
       if (data.success) {
         document.getElementById('edit_codigoExamen').value = data.codigo;
       } else {
-        Swal.fire('Error', 'No se pudo generar un nuevo código.', 'error');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo generar un nuevo código.',
+          customClass: { popup: 'swal-mover-derecha' }
+        });
       }
     } catch (err) {
       console.error('Error al generar nuevo código:', err);
@@ -314,18 +335,29 @@ document.getElementById('editExamForm').addEventListener('submit', async functio
         icon: 'success',
         title: '¡Éxito!',
         text: 'Examen actualizado correctamente.',
-        confirmButtonText: 'Aceptar'
+        confirmButtonText: 'Aceptar',
+        customClass: { popup: 'swal-mover-derecha' }
       }).then(() => {
         const modal = bootstrap.Modal.getInstance(document.getElementById('viewEditExamModal'));
         modal.hide();
         cargarExamenes(); // 🔁 Refrescar tabla
       });
     } else {
-      Swal.fire('Error', result.message || 'No se pudo actualizar el examen.', 'error');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: result.message || 'No se pudo actualizar el examen.',
+        customClass: { popup: 'swal-mover-derecha' }
+      });
     }
   } catch (error) {
     console.error('Error al actualizar el examen:', error);
-    Swal.fire('Error', 'Ocurrió un error inesperado.', 'error');
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Ocurrió un error inesperado.',
+      customClass: { popup: 'swal-mover-derecha' }
+    });
   }
 });
 // =================== Eliminar examen con SweetAlert ===================
@@ -342,7 +374,8 @@ document.addEventListener('click', async (e) => {
       confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6'
+      cancelButtonColor: '#3085d6',
+      customClass: { popup: 'swal-mover-derecha' }
     });
 
     if (confirmacion.isConfirmed) {
@@ -357,16 +390,31 @@ document.addEventListener('click', async (e) => {
           const fila = document.querySelector(`tr[data-examenid="${examenId}"]`);
           if (fila) fila.remove();
 
-          await Swal.fire('Eliminado', result.message, 'success');
+          await Swal.fire({
+            icon: 'success',
+            title: 'Eliminado',
+            text: result.message,
+            customClass: { popup: 'swal-mover-derecha' }
+          });
 
           // Si quieres recargar toda la tabla:
           // cargarExamenes();
         } else {
-          Swal.fire('Error', result.message || 'No se pudo eliminar el examen.', 'error');
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: result.message || 'No se pudo eliminar el examen.',
+            customClass: { popup: 'swal-mover-derecha' }
+          });
         }
       } catch (err) {
         console.error(err);
-        Swal.fire('Error', 'Hubo un problema al intentar eliminar el examen.', 'error');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Hubo un problema al intentar eliminar el examen.',
+          customClass: { popup: 'swal-mover-derecha' }
+        });
       }
     }
   }
